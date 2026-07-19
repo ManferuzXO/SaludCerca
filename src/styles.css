@@ -21,6 +21,8 @@
   --icon-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m4 11 8-7 8 7v9H4v-9Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M9 20v-5h6v5' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
   --icon-centers: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 21V5h14v16M9 21v-4h6v4M8 9h2m4 0h2m-8 4h2m4 0h2' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M12 6v6m-3-3h6' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   --icon-help: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M9.5 9a2.7 2.7 0 1 1 4.5 2 3 3 0 0 0-1.5 2.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M12 17h.01' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --icon-sun: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='4' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M12 2v2m0 16v2m10-10h-2M4 12H2m17.1-7.1-1.4 1.4M6.3 17.7l-1.4 1.4m14.2 0-1.4-1.4M6.3 6.3 4.9 4.9' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --icon-moon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 15.4A8.5 8.5 0 0 1 8.6 4 8.5 8.5 0 1 0 20 15.4Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
   --icon-refresh: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 11a8 8 0 1 0 2 5.3M20 4v7h-7' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --icon-send: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m21 3-7 18-3.8-7.2L3 10l18-7Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='m10.2 13.8 4.3-4.3' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   --icon-back: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 12H5m6-6-6 6 6 6' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -164,15 +166,48 @@ select:focus-visible {
   font-weight: 700;
 }
 .theme-toggle {
-  background: transparent;
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: #f1f6f4;
   color: var(--teal-dark);
   border: 1px solid #b8d7d0;
-  border-radius: 9px;
-  padding: 9px 12px;
-  font-size: 12px;
-  font-weight: 700;
+  border-radius: 50%;
 }
-.theme-toggle:hover { background: #eaf5f1; }
+.theme-toggle::before {
+  content: "";
+  width: 19px;
+  height: 19px;
+  background: currentColor;
+  -webkit-mask: var(--icon-sun) center / contain no-repeat;
+  mask: var(--icon-sun) center / contain no-repeat;
+}
+:root[data-theme="dark"] .theme-toggle::before {
+  -webkit-mask-image: var(--icon-moon);
+  mask-image: var(--icon-moon);
+}
+.theme-toggle:hover { background: #e1f2ed; transform: translateY(-1px) rotate(8deg); }
+.theme-toggle:hover::before { animation: theme-icon-turn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.theme-toggle:active { transform: scale(0.92); }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@keyframes theme-icon-turn {
+  from { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(145deg) scale(0.72); }
+  to { transform: rotate(360deg) scale(1); }
+}
 .icon {
   margin-right: 6px;
   color: var(--teal);
@@ -1375,7 +1410,7 @@ footer small {
     font-size: 0;
     padding: 9px;
   }
-  .theme-toggle { padding: 7px 9px; font-size: 11px; }
+  .theme-toggle { width: 40px; height: 40px; min-height: 40px; padding: 0; }
   .profile .icon {
     font-size: 15px;
     margin: 0;
@@ -1874,6 +1909,10 @@ footer button {
   }
   .desktop-nav {
     display: none;
+  }
+  .theme-toggle {
+    margin-left: auto;
+    margin-right: 12px;
   }
   .profile {
     margin-left: auto;

@@ -158,12 +158,12 @@ function Header({
         </button>
       </nav>
       <button
-        className="theme-toggle button-icon icon-refresh"
+        className="theme-toggle"
         onClick={() => setTheme(theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto")}
         aria-label={`Cambiar tema. Tema actual: ${theme === "auto" ? "automático" : theme === "dark" ? "oscuro" : "claro"}`}
-        title="Cambiar tema"
+        title={`Tema actual: ${theme === "auto" ? `automático (${systemTheme === "dark" ? "oscuro" : "claro"})` : theme === "dark" ? "oscuro" : "claro"}`}
       >
-        Tema: {theme === "auto" ? `Auto (${systemTheme === "dark" ? "Oscuro" : "Claro"})` : theme === "dark" ? "Oscuro" : "Claro"}
+        <span className="sr-only">Cambiar tema</span>
       </button>
       <button
         className="profile button-icon icon-history"
