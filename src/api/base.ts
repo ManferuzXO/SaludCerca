@@ -13,4 +13,5 @@ function isLocalNetworkHttp() {
 // Así una URL antigua de un túnel no rompe las pruebas locales por HTTP.
 export const API_URL = isLocalNetworkHttp()
   ? `${window.location.protocol}//${window.location.hostname}:3000/api`
-  : import.meta.env.VITE_API_URL ?? `${window.location.protocol}//${window.location.hostname}:3000/api`;
+  // En Render, NestJS entrega también el build de React y ambos comparten dominio HTTPS.
+  : import.meta.env.VITE_API_URL ?? "/api";

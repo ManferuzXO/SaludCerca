@@ -159,7 +159,7 @@ El catálogo reúne centros municipales para la demostración. La disponibilidad
 
 ## Despliegue
 
-Un repositorio GitHub guarda el código, pero no ejecuta el sistema. Para publicarlo se requiere desplegar por separado el frontend, el backend y PostgreSQL, y configurar allí las variables de entorno. El dominio público debe usar HTTPS para que voz y geolocalización funcionen correctamente en móviles.
+El repositorio incluye [`render.yaml`](render.yaml) para desplegar todo desde una sola cuenta Render: un Web Service que publica React y NestJS bajo el mismo dominio, más PostgreSQL administrado. En Render, crea el Blueprint desde el repositorio e ingresa únicamente `GEMINI_API_KEY` cuando se solicite. El dominio público usa HTTPS, requisito para que voz y geolocalización funcionen correctamente en móviles.
 
 ## Licencia
 

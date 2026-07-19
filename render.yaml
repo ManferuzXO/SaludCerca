@@ -1,0 +1,40 @@
+# Un único Web Service publica React y NestJS bajo el mismo dominio HTTPS.
+# Las claves sensibles no se guardan aquí: Render las solicita al crear el Blueprint.
+services:
+  - type: web
+    runtime: node
+    name: saludcerca-manferuzxo
+    region: oregon
+    plan: free
+    buildCommand: npm ci && npm run build && cd backend && npm ci && npm run db:generate && npm run build
+    preDeployCommand: cd backend && npm run db:deploy
+    initialDeployHook: cd backend && npm run db:seed
+    startCommand: cd backend && npm run start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: saludcerca-db-manferuzxo
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: AI_PROVIDER
+        value: gemini
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_CHAT_MODEL
+        value: gemini-3.1-flash-lite
+      - key: GEMINI_AUDIO_MODEL
+        value: gemini-3.5-flash
+      - key: GEMINI_TTS_MODEL
+        value: gemini-2.5-flash-preview-tts
+
+databases:
+  - name: saludcerca-db-manferuzxo
+    region: oregon
+    plan: free
+    databaseName: saludcerca
+    user: saludcerca_user
