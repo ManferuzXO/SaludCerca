@@ -7,9 +7,8 @@ services:
     region: oregon
     plan: free
     buildCommand: npm ci && npm run build && cd backend && npm ci && npm run db:generate && npm run build
-    preDeployCommand: cd backend && npm run db:deploy
     initialDeployHook: cd backend && npm run db:seed
-    startCommand: cd backend && npm run start
+    startCommand: cd backend && npm run db:deploy && npm run start
     healthCheckPath: /api/health
     autoDeployTrigger: commit
     envVars:
