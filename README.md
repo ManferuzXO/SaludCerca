@@ -15,7 +15,7 @@ SaludCerca es una plataforma web para orientar a la ciudadanía de **La Paz, Bol
   <img src="https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white" alt="Leaflet" />
   <img src="https://img.shields.io/badge/OpenStreetMap-7EBC6F?style=for-the-badge&logo=openstreetmap&logoColor=white" alt="OpenStreetMap" />
   <img src="https://img.shields.io/badge/Gemini_API-4285F4?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Gemini Developer API" />
-  <img src="https://img.shields.io/badge/License-Acad%C3%A9mico-0F766E?style=for-the-badge" alt="Proyecto académico" />
+  <img src="https://img.shields.io/badge/Proyecto-Acad%C3%A9mico-0F766E?style=for-the-badge" alt="Proyecto académico" />
 </p>
 
 > La orientación del asistente no reemplaza una evaluación médica, no realiza diagnósticos ni indica tratamientos. Ante una emergencia, se debe buscar atención inmediata; en La Paz se muestra la referencia al **167**.
@@ -164,5 +164,3 @@ Un repositorio GitHub guarda el código, pero no ejecuta el sistema. Para public
 ## Licencia
 
 Proyecto académico. Define una licencia antes de distribuirlo para uso público.
-#   S a l u d C e r c a  
- 
