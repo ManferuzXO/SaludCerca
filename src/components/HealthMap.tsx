@@ -33,8 +33,16 @@ function FocusSelected({
   const map = useMap();
   useEffect(() => {
     if (selected?.latitude === undefined || selected.longitude === undefined) return;
-    map.flyTo([selected.latitude, selected.longitude], 15, { animate: true, duration: 0.65 });
-    markerRefs.current[selected.id]?.openPopup();
+    const focusCenter = () => {
+      map.invalidateSize({ animate: false });
+      map.flyTo([selected.latitude!, selected.longitude!], 13, {
+        animate: true,
+        duration: 0.65,
+      });
+      markerRefs.current[selected.id]?.openPopup();
+    };
+    const timer = window.setTimeout(focusCenter, 80);
+    return () => window.clearTimeout(timer);
   }, [map, markerRefs, selected?.id, selected?.latitude, selected?.longitude]);
   return null;
 }
@@ -44,12 +52,14 @@ export function HealthMap({
   selected,
   userPosition,
   onSelect,
+  onReserve,
   containerRef,
 }: {
   centers: Center[];
   selected: Center | null;
   userPosition: Position | null;
   onSelect: (center: Center) => void;
+  onReserve: (center: Center) => void;
   containerRef?: React.RefObject<HTMLDivElement | null>;
 }) {
   const markerRefs = useRef<Record<string, L.Marker>>({});
@@ -103,7 +113,7 @@ export function HealthMap({
               <br />
               <button
                 className="map-popup-button"
-                onClick={() => onSelect(center)}
+                onClick={() => onReserve(center)}
               >
                 Seleccionar
               </button>

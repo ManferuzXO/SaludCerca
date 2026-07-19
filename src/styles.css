@@ -23,6 +23,7 @@
   --icon-help: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M9.5 9a2.7 2.7 0 1 1 4.5 2 3 3 0 0 0-1.5 2.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M12 17h.01' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
   --icon-sun: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='4' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M12 2v2m0 16v2m10-10h-2M4 12H2m17.1-7.1-1.4 1.4M6.3 17.7l-1.4 1.4m14.2 0-1.4-1.4M6.3 6.3 4.9 4.9' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   --icon-moon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 15.4A8.5 8.5 0 0 1 8.6 4 8.5 8.5 0 1 0 20 15.4Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --icon-mic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='9' y='3' width='6' height='11' rx='3' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M6 11a6 6 0 0 0 12 0m-6 6v4m-3 0h6' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   --icon-refresh: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 11a8 8 0 1 0 2 5.3M20 4v7h-7' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --icon-send: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m21 3-7 18-3.8-7.2L3 10l18-7Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='m10.2 13.8 4.3-4.3' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   --icon-back: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 12H5m6-6-6 6 6 6' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -77,6 +78,7 @@ button {
 .icon-home { --button-icon: var(--icon-home); }
 .icon-centers { --button-icon: var(--icon-centers); }
 .icon-help { --button-icon: var(--icon-help); }
+.icon-mic { --button-icon: var(--icon-mic); }
 @keyframes button-icon-motion {
   0% { transform: translateX(0) rotate(0deg) scale(1); }
   45% { transform: translateX(3px) rotate(-7deg) scale(1.12); }
@@ -543,6 +545,10 @@ select:focus-visible {
   grid-template-columns: 48% 1fr;
   gap: 20px;
 }
+.mobile-center-tabs,
+.mobile-map-button {
+  display: none;
+}
 .center-list {
   display: grid;
   gap: 12px;
@@ -706,7 +712,8 @@ select:focus-visible {
 .map-legend {
   position: absolute;
   bottom: 14px;
-  left: 14px;
+  left: 50%;
+  transform: translateX(-50%);
   background: #fff;
   border-radius: 7px;
   padding: 9px 11px;
@@ -1105,11 +1112,46 @@ select:focus-visible {
   font-size: 11px;
   font-weight: 800;
 }
+.chat-input .chat-round-button {
+  width: 46px;
+  min-width: 46px;
+  height: 46px;
+  min-height: 46px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: 0 4px 11px #08746d30;
+}
+.chat-input .chat-round-button::after {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  vertical-align: 0;
+}
+.chat-input .send-button {
+  background: #0b8a7f;
+}
+.chat-input .send-button:hover {
+  background: #067269;
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 8px 17px #08746d45;
+}
+.chat-input .voice-button {
+  background: #e7f5f2;
+  border: 1px solid #b9ded7;
+  color: #08746e;
+  box-shadow: none;
+}
+.chat-input .voice-button:hover {
+  background: #d6eee8;
+  transform: translateY(-2px) scale(1.05);
+}
 .chat-message .bot {
   white-space: pre-line;
 }
 .chat-input .voice-button {
-  background: #e8f5f3;
+  background: #e7f5f2;
   color: var(--teal);
 }
 .chat-input .voice-button.listening {
@@ -1374,6 +1416,45 @@ footer small {
   .booking-grid {
     grid-template-columns: 1fr;
   }
+  .mobile-center-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 16px 0 12px;
+    padding: 6px;
+    background: #e8f3ef;
+    border: 1px solid #cce2db;
+    border-radius: 12px;
+  }
+  .mobile-center-tabs button {
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 8px;
+    background: transparent;
+    color: #35615e;
+    font-weight: 800;
+  }
+  .mobile-center-tabs button.active {
+    background: #fff;
+    color: var(--teal-dark);
+    box-shadow: 0 2px 8px #1a595115;
+  }
+  .mobile-center-tabs .button-icon::after { width: 16px; height: 16px; }
+  .centers-page.mobile-view-map .center-list { display: none; }
+  .centers-page.mobile-view-list .health-map { display: none; }
+  .mobile-map-button {
+    display: inline-flex;
+    align-items: center;
+    color: #43716d;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .card-bottom {
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  .card-bottom > span { width: 100%; }
   .health-map {
     min-height: 350px;
     order: -1;
@@ -2486,7 +2567,31 @@ footer button {
 }
 
 /* Mapa Leaflet */
-.health-map{min-height:522px;border-radius:12px;overflow:hidden;position:relative;border:1px solid #d9e8e2}.leaflet-map{width:100%;height:522px;z-index:1}.health-marker-wrap{background:transparent;border:0}.health-marker{width:34px;height:34px;display:grid;place-items:center;border:3px solid #fff;border-radius:50% 50% 50% 0;background:#16867d;color:#fff;font:bold 22px/1 sans-serif;box-shadow:0 3px 9px #235d5966;transform:rotate(-45deg)}.health-marker.selected{background:#e36e2d;transform:rotate(-45deg) scale(1.15)}.health-marker.pending{background:#d38a1c}.pending-dot{background:#d38a1c}.map-popup-button{margin-top:7px;background:#09746e;color:#fff;border-radius:5px;padding:5px 8px;font-size:11px;font-weight:700}.health-map .map-legend{z-index:2}.leaflet-popup-content{font:12px/1.45 'DM Sans',sans-serif;color:#375b5d}.leaflet-popup-content strong{color:#173b3d}@media(max-width:800px){.health-map,.leaflet-map{min-height:350px;height:350px}}
+.health-map {
+  width: 100%;
+  min-height: 522px;
+  border: 1px solid #d9e8e2;
+  border-radius: 12px;
+  overflow: hidden;
+  position: sticky;
+  /* Mantiene los cuatro bordes visibles al recorrer la lista en pantallas de escritorio. */
+  top: clamp(18px, calc(50vh - 261px), 92px);
+  align-self: start;
+  justify-self: stretch;
+}
+.leaflet-map { width: 100%; height: 522px; z-index: 1; }
+.health-marker-wrap { background: transparent; border: 0; }
+.health-marker { width: 34px; height: 34px; display: grid; place-items: center; border: 3px solid #fff; border-radius: 50% 50% 50% 0; background: #16867d; color: #fff; font: bold 22px/1 sans-serif; box-shadow: 0 3px 9px #235d5966; transform: rotate(-45deg); }
+.health-marker.selected { background: #e36e2d; transform: rotate(-45deg) scale(1.15); }
+.health-marker.pending, .pending-dot { background: #d38a1c; }
+.map-popup-button { margin-top: 7px; background: #09746e; color: #fff; border-radius: 5px; padding: 5px 8px; font-size: 11px; font-weight: 700; }
+.health-map .map-legend { z-index: 2; }
+.leaflet-popup-content { font: 12px/1.45 "DM Sans", sans-serif; color: #375b5d; }
+.leaflet-popup-content strong { color: #173b3d; }
+@media (max-width: 800px) {
+  .health-map { min-height: 350px; height: 350px; position: relative; top: auto; }
+  .leaflet-map { min-height: 350px; height: 350px; }
+}
 
 /* Acceso ciudadano */
 .citizen-actions {
@@ -2844,6 +2949,10 @@ footer button {
 :root[data-theme="dark"] .patient-access-card small { color: #c2d9d5; }
 :root[data-theme="dark"] .patient-form select,
 :root[data-theme="dark"] .patient-access-card input { background: #10201d; color: var(--ink); border-color: #466965; }
+:root[data-theme="dark"] .mobile-center-tabs { background: #172e2a; border-color: #35514e; }
+:root[data-theme="dark"] .mobile-center-tabs button { color: #b9d3cf; }
+:root[data-theme="dark"] .mobile-center-tabs button.active { background: #25433e; color: #8be0d7; box-shadow: none; }
+:root[data-theme="dark"] .mobile-map-button { color: #8be0d7; }
 
 /* Tipografía más cómoda para lectura en pantallas de PC y móviles. */
 body {

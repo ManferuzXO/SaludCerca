@@ -22,7 +22,7 @@ SaludCerca es una plataforma web académica para acercar la atención municipal 
 ## Qué puede hacer
 
 - Explorar el catálogo de centros municipales de La Paz por nombre o servicio.
-- Ver marcadores en un mapa de Leaflet con datos de OpenStreetMap.
+- Ver marcadores en un mapa de Leaflet con datos de OpenStreetMap y solicitar una ficha directamente desde el centro seleccionado.
 - Compartir ubicación para ordenar centros y sugerir el más cercano disponible.
 - Solicitar una ficha mediante nombres, C.I. y seguro médico, sin registro ni contraseña.
 - Generar un número de ficha y consultar o cancelar reservas con el C.I.
@@ -30,7 +30,7 @@ SaludCerca es una plataforma web académica para acercar la atención municipal 
 - Recibir orientación por texto o audio usando Gemini Developer API, con respuesta de voz opcional.
 - Detectar señales de alerta antes de consultar la IA.
 - Permitir que personal operador actualice disponibilidad, cupos y tiempo de espera de los centros.
-- Usar una interfaz adaptable a PC y móvil, con tema claro/oscuro según el sistema, controles de tema, tipografía ampliada, iconos SVG y animaciones.
+- Usar una interfaz adaptable a PC y móvil; en celular alterna entre mapa y lista de centros, con tema claro/oscuro, tipografía ampliada, iconos SVG y animaciones.
 
 ## Arquitectura
 

@@ -641,6 +641,7 @@ function Centers({
   const [userPosition, setUserPosition] = useState<{ latitude: number; longitude: number } | null>(null);
   const [locationMessage, setLocationMessage] = useState("");
   const [recommended, setRecommended] = useState<Center | null>(null);
+  const [mobileView, setMobileView] = useState<"map" | "list">("map");
   const mapRef = useRef<HTMLDivElement>(null);
   const loadCenters = async () => {
     setLoading(true);
@@ -673,9 +674,24 @@ function Centers({
   const select = (c: Center, revealMap = true) => {
     setSelected(c);
     choose(c);
-    if (revealMap) {
-      requestAnimationFrame(() => mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
+    if (!revealMap) return;
+    if (window.matchMedia("(max-width: 800px)").matches) {
+      setMobileView("map");
+      requestAnimationFrame(() => {
+        mapRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.dispatchEvent(new Event("resize"));
+      });
+      return;
     }
+    requestAnimationFrame(() => mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
+  };
+  const showOnMap = (center: Center) => {
+    select(center, false);
+    setMobileView("map");
+    requestAnimationFrame(() => {
+      mapRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.dispatchEvent(new Event("resize"));
+    });
   };
   const applyLocation = (location: { latitude: number; longitude: number }) => {
     setFiltered((current) => {
@@ -728,7 +744,7 @@ function Centers({
     }, () => setLocationMessage("No pudimos obtener tu ubicación. Revisa el permiso del navegador."), { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
   };
   return (
-    <section className="page centers-page">
+    <section className={`page centers-page mobile-view-${mobileView}`}>
       <div className="page-intro">
         <span className="eyebrow">CENTROS MUNICIPALES</span>
         <h1>Encuentra atención cerca de ti</h1>
@@ -795,6 +811,29 @@ function Centers({
           </span>
         </div>
       ) : (
+        <>
+          <div className="mobile-center-tabs" role="tablist" aria-label="Vista de centros">
+            <button
+              className={`button-icon icon-location ${mobileView === "map" ? "active" : ""}`}
+              role="tab"
+              aria-selected={mobileView === "map"}
+              onClick={() => {
+                const focus = selected ?? filtered[0];
+                if (focus) showOnMap(focus);
+              }}
+              disabled={!selected && !filtered[0]}
+            >
+              Mapa
+            </button>
+            <button
+              className={`button-icon icon-search ${mobileView === "list" ? "active" : ""}`}
+              role="tab"
+              aria-selected={mobileView === "list"}
+              onClick={() => setMobileView("list")}
+            >
+              Lista de centros
+            </button>
+          </div>
         <div className="content-grid">
           <div className="center-list">
             {loading ? (
@@ -809,9 +848,10 @@ function Centers({
                   selected={selected?.id === c.id}
                   onSelect={() => select(c)}
                   onDetails={() => {
-                    select(c);
+                    select(c, false);
                     navigate("/ficha");
                   }}
+                  onShowMap={() => showOnMap(c)}
                 />
               ))
             )}
@@ -821,9 +861,14 @@ function Centers({
             selected={selected}
             userPosition={userPosition}
             onSelect={(center) => select(center, false)}
+            onReserve={(center) => {
+              select(center, false);
+              navigate("/ficha");
+            }}
             containerRef={mapRef}
           />
         </div>
+        </>
       )}
     </section>
   );
@@ -834,11 +879,13 @@ function CenterCard({
   selected,
   onSelect,
   onDetails,
+  onShowMap,
 }: {
   center: Center;
   selected: boolean;
   onSelect: () => void;
   onDetails: () => void;
+  onShowMap: () => void;
 }) {
   const stockClass =
     center.stock === "Disponible"
@@ -876,6 +923,15 @@ function CenterCard({
             ? `${center.capacity} fichas disponibles`
             : "Sin fichas hoy"}
         </span>
+        <button
+          className="mobile-map-button button-icon icon-location"
+          onClick={(event) => {
+            event.stopPropagation();
+            onShowMap();
+          }}
+        >
+          Ver mapa
+        </button>
         <button
           className="text-button button-icon icon-ticket"
           onClick={(e) => {
@@ -1493,16 +1549,18 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
             disabled={sending || recording || transcribing}
           />
           <button
-            className={`voice-button button-icon icon-chat ${recording ? "listening" : ""}`}
+            className={`voice-button chat-round-button button-icon ${recording ? "icon-close listening" : "icon-mic"}`}
             type="button"
             onClick={recording ? stopVoiceInput : startVoiceInput}
             disabled={sending || transcribing}
             aria-label={recording ? "Detener grabación" : "Grabar consulta por voz"}
             title={recording ? "Detener grabación" : "Grabar consulta por voz"}
           >
-            {recording ? "Detener" : transcribing ? "Procesando" : "Hablar"}
+            <span className="sr-only">{recording ? "Detener grabación" : transcribing ? "Procesando audio" : "Grabar consulta por voz"}</span>
           </button>
-          <button className="send-button button-icon icon-send" onClick={send} disabled={sending || recording || transcribing}>{sending ? "Enviando" : "Enviar"}</button>
+          <button className="send-button chat-round-button button-icon icon-send" onClick={send} disabled={sending || recording || transcribing} aria-label={sending ? "Enviando consulta" : "Enviar consulta"} title={sending ? "Enviando consulta" : "Enviar consulta"}>
+            <span className="sr-only">{sending ? "Enviando" : "Enviar"}</span>
+          </button>
         </div>
         {recording && <p className="voice-status">Grabando… pulsa Detener cuando termines.</p>}
         {transcribing && <p className="voice-status">Transcribiendo tu consulta…</p>}
