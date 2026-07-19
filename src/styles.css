@@ -10,12 +10,14 @@
   font-family: "DM Sans", sans-serif;
   color: var(--ink);
   background: var(--cream);
+  color-scheme: light dark;
 }
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
+  line-height: 1.5;
 }
 button,
 input,
@@ -25,6 +27,12 @@ select {
 button {
   cursor: pointer;
   border: 0;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #e19a37;
+  outline-offset: 3px;
 }
 .brand {
   font-size: 22px;
@@ -88,6 +96,16 @@ button {
   font-size: 14px;
   font-weight: 700;
 }
+.theme-toggle {
+  background: transparent;
+  color: var(--teal-dark);
+  border: 1px solid #b8d7d0;
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.theme-toggle:hover { background: #eaf5f1; }
 .icon {
   margin-right: 6px;
   color: var(--teal);
@@ -325,6 +343,7 @@ button {
   border: 0;
   outline: 0;
   width: 100%;
+  background: transparent;
   color: var(--ink);
   font-size: 13px;
 }
@@ -624,6 +643,24 @@ button {
   font-size: 15px;
   margin: 0 0 15px;
 }
+.booking-recommendation {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  margin: 18px 0;
+  border: 1px solid #9bd8cd;
+  border-radius: 10px;
+  background: #eefaf7;
+}
+.booking-recommendation small,
+.booking-recommendation strong,
+.booking-recommendation span { display: block; }
+.booking-recommendation small { color: var(--teal); font-size: 10px; font-weight: 800; letter-spacing: 0.65px; }
+.booking-recommendation strong { color: #1e5654; font-size: 13px; margin-top: 3px; }
+.booking-recommendation span { color: #5d7b7a; font-size: 11px; margin-top: 3px; }
+.booking-recommendation .outline { min-height: 38px; white-space: nowrap; }
 .slots {
   display: flex;
   gap: 8px;
@@ -660,6 +697,46 @@ button {
   margin-top: 6px;
   outline-color: var(--teal);
 }
+.patient-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 13px;
+  margin-bottom: 24px;
+}
+.patient-form label:nth-child(3) { grid-column: 1 / -1; }
+.patient-form select,
+.patient-access-card input {
+  display: block;
+  width: 100%;
+  border: 1px solid #dbe5e1;
+  border-radius: 7px;
+  padding: 11px;
+  margin-top: 6px;
+  background: #fff;
+  color: var(--ink);
+}
+.patient-access-card {
+  width: min(100%, 520px);
+  background: #fff;
+  border: 1px solid #dfe9e5;
+  border-radius: 14px;
+  padding: 25px;
+  box-shadow: var(--shadow);
+}
+.patient-access-card label {
+  display: block;
+  color: #557174;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+.patient-access-card .primary { margin-top: 4px; }
+.patient-access-card small { display: block; color: #6e8586; font-size: 12px; margin-top: 14px; }
+@media (max-width: 560px) {
+  .patient-form { grid-template-columns: 1fr; }
+  .patient-form label:nth-child(3) { grid-column: auto; }
+  .patient-access-card { padding: 20px; }
+}
 .booking-box .check {
   font-weight: 400;
   display: flex;
@@ -687,6 +764,35 @@ button {
   font-size: 12px;
   color: #5b7476;
   line-height: 1.6;
+}
+.nearby-alternatives {
+  border-top: 1px solid #c9ddd6;
+  margin-top: 18px;
+  padding-top: 16px;
+}
+.nearby-alternatives > b { display: block; color: #375e5d; font-size: 12px; margin-bottom: 8px; }
+.nearby-alternatives > small { color: #5b7476; font-size: 11px; line-height: 1.45; }
+.nearby-alternatives button {
+  display: block;
+  width: 100%;
+  min-height: auto;
+  margin-top: 7px;
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #c3ded7;
+  border-radius: 7px;
+  background: #f6fbf9;
+  color: var(--ink);
+}
+.nearby-alternatives button:hover { border-color: var(--teal); background: #e9f7f2; }
+.nearby-alternatives button span,
+.nearby-alternatives button small { display: block; }
+.nearby-alternatives button span { font-size: 11px; font-weight: 700; }
+.nearby-alternatives button small { color: #63807e; font-size: 10px; margin-top: 2px; }
+@media (max-width: 560px) {
+  .booking-recommendation { align-items: stretch; flex-direction: column; }
+  .booking-recommendation .outline,
+  .booking-recommendation .text-button { width: 100%; }
 }
 .summary hr,
 .ticket hr {
@@ -1069,6 +1175,7 @@ footer {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   align-items: center;
+  position: relative;
 }
 footer .brand {
   color: #fff;
@@ -1096,6 +1203,23 @@ footer small {
   padding-top: 16px;
   font-size: 10px;
   color: #91b0aa;
+}
+.operator-shortcut {
+  position: absolute;
+  right: max(2vw, 18px);
+  bottom: 13px;
+  min-height: auto;
+  padding: 4px 7px;
+  border-radius: 5px;
+  background: transparent;
+  color: #c4ddd8;
+  font-size: 10px;
+  opacity: 0.38;
+}
+.operator-shortcut:hover,
+.operator-shortcut:focus-visible {
+  opacity: 1;
+  background: #19524e;
 }
 @media (max-width: 800px) {
   .topbar nav {
@@ -1133,7 +1257,7 @@ footer small {
   .booking-grid {
     grid-template-columns: 1fr;
   }
-  .map {
+  .health-map {
     min-height: 350px;
     order: -1;
   }
@@ -1169,6 +1293,7 @@ footer small {
     font-size: 0;
     padding: 9px;
   }
+  .theme-toggle { padding: 7px 9px; font-size: 11px; }
   .profile .icon {
     font-size: 15px;
     margin: 0;
@@ -1228,6 +1353,161 @@ footer small {
     font-size: 25px;
   }
 }
+
+/* Lectura y uso cómodo para todas las edades. */
+button,
+input,
+select {
+  min-height: 44px;
+}
+input,
+select {
+  font-size: 16px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+@media (prefers-contrast: more) {
+  :root { --teal: #005f59; --teal-dark: #003f3b; --ink: #102b2d; --line: #8ba5a2; }
+  button, input, select { border-width: 2px !important; }
+}
+
+/* Se activa automáticamente según el modo del sistema operativo. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cream: #101817;
+    --ink: #e5f1ef;
+    --line: #35514e;
+    --teal: #51c2b5;
+    --teal-dark: #8be0d7;
+    --shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+  }
+  body { background: var(--cream); color: var(--ink); }
+  .topbar,
+  .quick-links,
+  .quick-links button,
+  .outline,
+  .center-card,
+  .booking-box,
+  .summary,
+  .confirmation,
+  .appointment-card,
+  .empty-appointments,
+  .login-card,
+  .assistant-chat,
+  .chat-input,
+  .mobile-menu,
+  .profile,
+  .filter {
+    background: #172522;
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .topbar nav button,
+  .quick-links b,
+  .brand,
+  .page h1,
+  .center-card h2,
+  .booking h3,
+  .summary h2,
+  .appointment-card h2 { color: var(--ink); }
+  .hero { background: #17312c; }
+  .hero-copy > p,
+  .muted,
+  .center-card p,
+  .summary p,
+  .appointment-address,
+  .appointment-info p,
+  .login-card > p { color: #b6ceca; }
+  .hero-shape { border-color: #397d74; color: #6ed7ca; }
+  .pulse { border-color: #397d74; }
+  .emergency { background: #35271e; border-color: #9f6b3b; }
+  .emergency strong { color: #ffd0a9; }
+  .emergency span { color: #f1c9a9; }
+  .outline { background: transparent; color: var(--teal); }
+  .chat-head, footer { background: #0f5d57; }
+  .chat-message .bot,
+  .voice-toggle,
+  .demo-login { background: #203a35; color: var(--ink); }
+  .slot,
+  .login-card form input,
+  .chat-input input { background: #10201d; color: var(--ink); border-color: #466965; }
+  .leaflet-popup-content { color: #173b3d; }
+}
+
+/* Selección manual: anula la preferencia del sistema cuando la persona lo pide. */
+:root[data-theme="dark"] {
+  --cream: #101817;
+  --ink: #e5f1ef;
+  --line: #35514e;
+  --teal: #51c2b5;
+  --teal-dark: #8be0d7;
+  --shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+:root[data-theme="dark"] body { background: var(--cream); color: var(--ink); }
+:root[data-theme="dark"] .preload,
+:root[data-theme="dark"] .topbar,
+:root[data-theme="dark"] .quick-links,
+:root[data-theme="dark"] .quick-links button,
+:root[data-theme="dark"] .outline,
+:root[data-theme="dark"] .profile,
+:root[data-theme="dark"] .filter,
+:root[data-theme="dark"] .theme-toggle,
+:root[data-theme="dark"] .appointment-card,
+:root[data-theme="dark"] .empty-appointments,
+:root[data-theme="dark"] .login-card,
+:root[data-theme="dark"] .booking-box,
+:root[data-theme="dark"] .summary,
+:root[data-theme="dark"] .confirmation,
+:root[data-theme="dark"] .assistant-chat,
+:root[data-theme="dark"] .chat-input,
+:root[data-theme="dark"] .center-card { background: #172522; color: var(--ink); border-color: var(--line); }
+:root[data-theme="dark"] .topbar nav button,
+:root[data-theme="dark"] .quick-links b,
+:root[data-theme="dark"] .brand,
+:root[data-theme="dark"] .page h1,
+:root[data-theme="dark"] .center-card h2,
+:root[data-theme="dark"] .booking h3,
+:root[data-theme="dark"] .summary h2,
+:root[data-theme="dark"] .appointment-card h2,
+:root[data-theme="dark"] .empty-appointments h2,
+:root[data-theme="dark"] .login-card h1 { color: var(--ink); }
+:root[data-theme="dark"] .hero { background: #17312c; }
+:root[data-theme="dark"] .hero-copy > p,
+:root[data-theme="dark"] .muted,
+:root[data-theme="dark"] .center-card p,
+:root[data-theme="dark"] .summary p,
+:root[data-theme="dark"] .appointment-address,
+:root[data-theme="dark"] .appointment-info p,
+:root[data-theme="dark"] .login-card > p,
+:root[data-theme="dark"] .login-card form label { color: #b6ceca; }
+:root[data-theme="dark"] .hero-shape { border-color: #397d74; color: #6ed7ca; }
+:root[data-theme="dark"] .pulse { border-color: #397d74; }
+:root[data-theme="dark"] .preload-line { background: #31564f; }
+:root[data-theme="dark"] .emergency { background: #35271e; border-color: #9f6b3b; }
+:root[data-theme="dark"] .emergency strong { color: #ffd0a9; }
+:root[data-theme="dark"] .emergency span { color: #f1c9a9; }
+:root[data-theme="dark"] .outline { background: transparent; color: var(--teal); }
+:root[data-theme="dark"] .chat-head,
+:root[data-theme="dark"] footer { background: #0f5d57; }
+:root[data-theme="dark"] .chat-message .bot,
+:root[data-theme="dark"] .voice-toggle,
+:root[data-theme="dark"] .demo-login,
+:root[data-theme="dark"] .empty-appointments > span { background: #203a35; color: var(--ink); }
+:root[data-theme="dark"] .slot,
+:root[data-theme="dark"] .login-card form input,
+:root[data-theme="dark"] .chat-input input { background: #10201d; color: var(--ink); border-color: #466965; }
+
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="light"] .preload { background: #e7f3ee; }
 
 /* Motion system: subtle feedback on desktop and tactile response on mobile. */
 @keyframes page-enter {
@@ -2376,3 +2656,66 @@ footer button {
     min-height: calc(100vh - 190px);
   }
 }
+
+/* Prioridad final para los controles de búsqueda en tema oscuro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .search-card { background: #172522; color: var(--ink); }
+  :root:not([data-theme="light"]) .field label { color: #c2d9d5; }
+  :root:not([data-theme="light"]) .input-wrap,
+  :root:not([data-theme="light"]) .field select { background: #10201d; border-color: #466965; color: var(--ink); }
+  :root:not([data-theme="light"]) .input-wrap input { background: transparent; color: var(--ink); }
+  :root:not([data-theme="light"]) .locate { background: #203a35; color: var(--teal); }
+}
+:root[data-theme="dark"] .search-card { background: #172522; color: var(--ink); }
+:root[data-theme="dark"] .field label { color: #c2d9d5; }
+:root[data-theme="dark"] .input-wrap,
+:root[data-theme="dark"] .field select { background: #10201d; border-color: #466965; color: var(--ink); }
+:root[data-theme="dark"] .input-wrap input { background: transparent; color: var(--ink); }
+:root[data-theme="dark"] .locate { background: #203a35; color: var(--teal); }
+
+/* Estos componentes se definen al final de la hoja; se reiteran aquí para
+   conservar el modo oscuro automático también en reservas y cuentas. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .appointment-card,
+  :root:not([data-theme="light"]) .empty-appointments,
+  :root:not([data-theme="light"]) .login-card,
+  :root:not([data-theme="light"]) .booking-box,
+  :root:not([data-theme="light"]) .summary,
+  :root:not([data-theme="light"]) .confirmation,
+  :root:not([data-theme="light"]) .assistant-chat,
+  :root:not([data-theme="light"]) .chat-input,
+  :root:not([data-theme="light"]) .operator-card,
+  :root:not([data-theme="light"]) .center-card { background: #172522; color: var(--ink); border-color: var(--line); }
+  :root:not([data-theme="light"]) .appointment-card h2,
+  :root:not([data-theme="light"]) .empty-appointments h2,
+  :root:not([data-theme="light"]) .login-card h1,
+  :root:not([data-theme="light"]) .booking h3,
+  :root:not([data-theme="light"]) .summary h2 { color: var(--ink); }
+  :root:not([data-theme="light"]) .appointment-address,
+  :root:not([data-theme="light"]) .appointment-info p,
+  :root:not([data-theme="light"]) .appointment-info b,
+  :root:not([data-theme="light"]) .appointment-code small,
+  :root:not([data-theme="light"]) .appointment-code span,
+  :root:not([data-theme="light"]) .empty-appointments p,
+  :root:not([data-theme="light"]) .login-card > p,
+  :root:not([data-theme="light"]) .login-card form label { color: #b6ceca; }
+  :root:not([data-theme="light"]) .appointment-status { background: #254a3d; color: #91e0b8; }
+  :root:not([data-theme="light"]) .appointment-status.cancelled { background: #4a302f; color: #ffd0c9; }
+  :root:not([data-theme="light"]) .empty-appointments > span,
+  :root:not([data-theme="light"]) .demo-login { background: #203a35; color: var(--ink); }
+  :root:not([data-theme="light"]) .login-card form input { background: #10201d; color: var(--ink); border-color: #466965; }
+  :root:not([data-theme="light"]) .form-error { background: #4a2927; color: #ffd0c9; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .patient-access-card { background: #172522; border-color: var(--line); }
+  :root:not([data-theme="light"]) .patient-access-card label,
+  :root:not([data-theme="light"]) .patient-access-card small { color: #c2d9d5; }
+  :root:not([data-theme="light"]) .patient-form select,
+  :root:not([data-theme="light"]) .patient-access-card input { background: #10201d; color: var(--ink); border-color: #466965; }
+}
+:root[data-theme="dark"] .patient-access-card { background: #172522; border-color: var(--line); }
+:root[data-theme="dark"] .patient-access-card label,
+:root[data-theme="dark"] .patient-access-card small { color: #c2d9d5; }
+:root[data-theme="dark"] .patient-form select,
+:root[data-theme="dark"] .patient-access-card input { background: #10201d; color: var(--ink); border-color: #466965; }

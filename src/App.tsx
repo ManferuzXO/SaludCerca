@@ -9,11 +9,15 @@ import {
 import { clearSession, getSession, login, register } from "./api/auth";
 import {
   cancelAppointment,
+  cancelPatientAppointment,
   createAppointment,
   getAppointmentSlots,
   getMyAppointments,
+  getPatientAppointments,
+  INSURANCE_PROVIDERS,
   type Appointment,
   type AppointmentSlot,
+  type PatientData,
 } from "./api/appointments";
 import { chatWithAssistant, synthesizeAssistantSpeech, transcribeAssistantAudio } from "./api/assistant";
 import { createTriageReply, type TriageReply } from "./triage";
@@ -27,6 +31,8 @@ type Route =
   | "/como-funciona"
   | "/operador"
   | "/ingresar";
+type ThemeMode = "auto" | "light" | "dark";
+const THEME_KEY = "saludcerca_theme";
 const routes: Route[] = [
   "/",
   "/centros",
@@ -57,6 +63,20 @@ function useRoute() {
   return { route, navigate };
 }
 
+function useTheme() {
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    const saved = localStorage.getItem(THEME_KEY);
+    return saved === "light" || saved === "dark" ? saved : "auto";
+  });
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "auto") root.removeAttribute("data-theme");
+    else root.dataset.theme = theme;
+    localStorage.setItem(THEME_KEY, theme);
+  }, [theme]);
+  return { theme, setTheme };
+}
+
 const Icon = ({ children }: { children: string }) => (
   <span className="icon" aria-hidden="true">
     {children}
@@ -80,9 +100,13 @@ function Preload() {
 function Header({
   navigate,
   route,
+  theme,
+  setTheme,
 }: {
   navigate: (to: Route) => void;
   route: Route;
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const session = getSession();
@@ -119,10 +143,18 @@ function Header({
         </button>
       </nav>
       <button
-        className="profile"
-        onClick={() => (session ? (clearSession(), go("/")) : go("/ingresar"))}
+        className="theme-toggle"
+        onClick={() => setTheme(theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto")}
+        aria-label={`Cambiar tema. Tema actual: ${theme === "auto" ? "automático" : theme === "dark" ? "oscuro" : "claro"}`}
+        title="Cambiar tema"
       >
-        <Icon>◉</Icon> {session ? "Salir" : "Ingresar"}
+        Tema: {theme === "auto" ? "Auto" : theme === "dark" ? "Oscuro" : "Claro"}
+      </button>
+      <button
+        className="profile"
+        onClick={() => (session ? (clearSession(), go("/")) : go("/mis-fichas"))}
+      >
+        <Icon>◉</Icon> {session ? "Salir" : "Mis fichas"}
       </button>
       <button
         className={`menu-toggle ${menuOpen ? "open" : ""}`}
@@ -171,10 +203,10 @@ function Header({
         <hr />
         <button
           onClick={() =>
-            session ? (clearSession(), go("/")) : go("/ingresar")
+            session ? (clearSession(), go("/")) : go("/mis-fichas")
           }
         >
-          <span>◉</span> {session ? "Cerrar sesión" : "Ingresar"}
+          <span>◉</span> {session ? "Cerrar sesión" : "Mis fichas"}
         </button>
         <small>SaludCerca · Atención cerca de ti</small>
       </aside>
@@ -195,9 +227,16 @@ function Footer({ navigate }: { navigate: (to: Route) => void }) {
       <div>
         <button onClick={() => navigate("/centros")}>Centros</button>
         <button onClick={() => navigate("/asistente")}>Asistente</button>
-        <button onClick={() => navigate("/operador")}>Acceso operador</button>
       </div>
       <small>Proyecto académico · Datos de demostración</small>
+      <button
+        className="operator-shortcut"
+        onClick={() => navigate("/operador")}
+        aria-label="Acceso para personal operador"
+        title="Acceso para personal operador"
+      >
+        Personal
+      </button>
     </footer>
   );
 }
@@ -209,7 +248,7 @@ function CitizenActions({
   navigate: (to: Route) => void;
   route: Route;
 }) {
-  const session = getSession();
+  const [session, setSession] = useState(getSession());
   if (!session || session.user.role !== "CITIZEN") return null;
   return (
     <div className="citizen-actions">
@@ -224,7 +263,7 @@ function CitizenActions({
   );
 }
 
-function MyAppointmentsPage({ navigate }: { navigate: (to: Route) => void }) {
+function LegacyMyAppointmentsPage({ navigate }: { navigate: (to: Route) => void }) {
   const session = getSession();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(Boolean(session));
@@ -358,7 +397,7 @@ function MyAppointmentsPage({ navigate }: { navigate: (to: Route) => void }) {
                   </p>
                 </div>
                 <div className="appointment-code">
-                  <small>CÓDIGO DE ATENCIÓN</small>
+                  <small>NÚMERO DE FICHA</small>
                   <strong>{item.code}</strong>
                   <span>Preséntalo al llegar al establecimiento.</span>
                 </div>
@@ -382,8 +421,84 @@ function MyAppointmentsPage({ navigate }: { navigate: (to: Route) => void }) {
   );
 }
 
+function MyAppointmentsPage({ navigate }: { navigate: (to: Route) => void }) {
+  const [access, setAccess] = useState({ ci: "" });
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState("");
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const load = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      setAppointments(await getPatientAppointments(access));
+      setLoaded(true);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "No se pudieron consultar tus fichas.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const cancel = async (id: string) => {
+    if (!confirm("¿Quieres cancelar esta ficha? El cupo se liberará para otra persona.")) return;
+    setCancellingId(id);
+    setError("");
+    try {
+      await cancelPatientAppointment(id, access);
+      await load();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "No se pudo cancelar la ficha.");
+    } finally {
+      setCancellingId(null);
+    }
+  };
+  const formatDate = (value: string) => new Intl.DateTimeFormat("es-BO", { dateStyle: "full", timeStyle: "short" }).format(new Date(value));
+  return (
+    <section className="my-appointments page">
+      <div className="page-intro">
+        <span className="eyebrow">MI ATENCIÓN</span>
+        <h1>Consulta tus fichas</h1>
+        <p>Ingresa tu C.I. para ver el estado y número de tus fichas.</p>
+      </div>
+      {!loaded ? (
+        <form className="patient-access-card" onSubmit={(event) => { event.preventDefault(); void load(); }}>
+          <label>Cédula de identidad
+            <input value={access.ci} onChange={(event) => setAccess((current) => ({ ...current, ci: event.target.value }))} placeholder="Ej. 1234567 LP" autoComplete="off" />
+          </label>
+          {error && <p className="form-error">{error}</p>}
+          <button className="primary" disabled={loading || access.ci.trim().length < 5}>
+            {loading ? "Consultando…" : "Ver mis fichas"}
+          </button>
+          <small>Tu C.I. no se muestra ni se guarda como texto en SaludCerca.</small>
+        </form>
+      ) : !appointments.length ? (
+        <div className="empty-appointments">
+          <span>□</span><h2>No tienes fichas registradas</h2><p>Puedes solicitar una atención en el centro municipal más cercano.</p>
+          <button className="primary" onClick={() => navigate("/centros")}>Buscar un centro</button>
+        </div>
+      ) : (
+        <div className="appointment-list">
+          {appointments.map((item) => {
+            const active = item.status === "BOOKED";
+            return <article className="appointment-card" key={item.id}>
+              <div className="appointment-card-top"><span className="type">FICHA {active ? "ACTIVA" : "HISTÓRICA"}</span><span className={active ? "appointment-status" : "appointment-status cancelled"}>{active ? "Reservada" : "Cancelada"}</span></div>
+              <h2>{item.center}</h2><p className="appointment-address"><Icon>⌖</Icon>{item.address}</p>
+              <div className="appointment-info"><p><b>Servicio</b>{item.service}</p><p><b>Fecha y hora</b>{formatDate(item.startsAt)}</p></div>
+              <div className="appointment-code"><small>NÚMERO DE FICHA</small><strong>{item.code}</strong></div>
+              {active && <button className="cancel-appointment" disabled={cancellingId === item.id} onClick={() => void cancel(item.id)}>{cancellingId === item.id ? "Cancelando…" : "Cancelar ficha"}</button>}
+            </article>;
+          })}
+        </div>
+      )}
+      {loaded && <button className="switch-auth" onClick={() => { setLoaded(false); setAppointments([]); setError(""); }}>Consultar otro C.I.</button>}
+    </section>
+  );
+}
+
 export default function App() {
   const { route, navigate } = useRoute();
+  const { theme, setTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [center, setCenter] = useState(centers[0]);
   useEffect(() => {
@@ -397,7 +512,7 @@ export default function App() {
     ) : route === "/centros" ? (
       <Centers navigate={navigate} choose={setCenter} />
     ) : route === "/ficha" ? (
-      <Appointment center={center} navigate={navigate} />
+      <Appointment center={center} navigate={navigate} choose={setCenter} />
     ) : route === "/mis-fichas" ? (
       <MyAppointmentsPage navigate={navigate} />
     ) : route === "/asistente" ? (
@@ -411,7 +526,7 @@ export default function App() {
     );
   return (
     <>
-      <Header navigate={navigate} route={route} />
+      <Header navigate={navigate} route={route} theme={theme} setTheme={setTheme} />
       <CitizenActions navigate={navigate} route={route} />
       <main>{page}</main>
       <Footer navigate={navigate} />
@@ -508,6 +623,7 @@ function Centers({
   const [userPosition, setUserPosition] = useState<{ latitude: number; longitude: number } | null>(null);
   const [locationMessage, setLocationMessage] = useState("");
   const [recommended, setRecommended] = useState<Center | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
   const loadCenters = async () => {
     setLoading(true);
     setError("");
@@ -536,9 +652,12 @@ function Centers({
     }, 250);
     return () => clearTimeout(timer);
   }, [query, service]);
-  const select = (c: Center) => {
+  const select = (c: Center, revealMap = true) => {
     setSelected(c);
     choose(c);
+    if (revealMap) {
+      requestAnimationFrame(() => mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
+    }
   };
   const applyLocation = (location: { latitude: number; longitude: number }) => {
     setFiltered((current) => {
@@ -679,7 +798,13 @@ function Centers({
               ))
             )}
           </div>
-          <HealthMap centers={filtered} selected={selected} userPosition={userPosition} onSelect={select} />
+          <HealthMap
+            centers={filtered}
+            selected={selected}
+            userPosition={userPosition}
+            onSelect={(center) => select(center, false)}
+            containerRef={mapRef}
+          />
         </div>
       )}
     </section>
@@ -793,11 +918,12 @@ function Map({
 function Appointment({
   center,
   navigate,
+  choose,
 }: {
   center: Center;
   navigate: (to: Route) => void;
+  choose: (center: Center) => void;
 }) {
-  const session = getSession();
   const [slots, setSlots] = useState<AppointmentSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<AppointmentSlot | null>(
     null,
@@ -806,6 +932,9 @@ function Appointment({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [patient, setPatient] = useState<PatientData>({ fullName: "", ci: "", insuranceProvider: INSURANCE_PROVIDERS[0] });
+  const [nearbyCenters, setNearbyCenters] = useState<Array<Center & { distanceKm: number }>>([]);
+  const [locationStatus, setLocationStatus] = useState("Buscando el centro más cercano…");
   useEffect(() => {
     if (typeof center.id !== "string") {
       setError("Elige un centro desde el buscador para reservar una ficha.");
@@ -828,17 +957,46 @@ function Appointment({
       }
     })();
   }, [center.id]);
-  const reserve = async () => {
-    if (!session) {
-      navigate("/ingresar");
+  const requestRecommendation = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus("Tu navegador no permite usar ubicación.");
       return;
     }
+    setLocationStatus("Buscando el centro más cercano…");
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      try {
+        const allCenters = await getCenters();
+        const nearby = allCenters
+          .filter((item) => item.latitude !== undefined && item.longitude !== undefined && item.open && item.capacity > 0)
+          .map((item) => {
+            const lat = (item.latitude! - position.coords.latitude) * 111;
+            const lng = (item.longitude! - position.coords.longitude) * 111 * Math.cos((position.coords.latitude * Math.PI) / 180);
+            return { ...item, distanceKm: Math.sqrt(lat ** 2 + lng ** 2) };
+          })
+          .sort((a, b) => a.distanceKm - b.distanceKm)
+          .slice(0, 4);
+        setNearbyCenters(nearby);
+        setLocationStatus(nearby.length ? "Recomendación basada en tu ubicación actual." : "No encontramos centros cercanos con fichas disponibles.");
+      } catch {
+        setLocationStatus("No pudimos calcular centros cercanos. Puedes elegir una alternativa manualmente.");
+      }
+    }, () => setLocationStatus("Permite tu ubicación para recomendarte el centro más cercano."), { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+  };
+  useEffect(() => { requestRecommendation(); }, []);
+  const changeCenter = (nextCenter: Center) => {
+    choose(nextCenter);
+    setSelectedSlot(null);
+    setError("");
+  };
+  const recommendedCenter = nearbyCenters[0] ?? null;
+  const alternatives = nearbyCenters.filter((item) => item.id !== center.id);
+  const reserve = async () => {
     if (!selectedSlot) return;
     setSaving(true);
     setError("");
     try {
       setAppointment(
-        await createAppointment(selectedSlot.id, session.accessToken),
+        await createAppointment(selectedSlot.id, patient),
       );
     } catch (cause) {
       setError(
@@ -869,7 +1027,7 @@ function Appointment({
           <h1>Tu ficha fue reservada</h1>
           <p>Presenta este código al llegar al centro de salud.</p>
           <div className="ticket">
-            <small>CÓDIGO DE ATENCIÓN</small>
+            <small>NÚMERO DE FICHA</small>
             <strong>{appointment.code}</strong>
             <hr />
             <p>
@@ -895,6 +1053,24 @@ function Appointment({
             <p className="muted">
               Estás solicitando una ficha en <b>{center.name}</b>.
             </p>
+            <div className="booking-recommendation">
+              <div>
+                <small>RECOMENDACIÓN POR CERCANÍA</small>
+                <strong>
+                  {recommendedCenter
+                    ? recommendedCenter.id === center.id
+                      ? "Este es el centro más cercano con fichas disponibles."
+                      : `${recommendedCenter.name} · ${recommendedCenter.distanceKm.toFixed(1).replace(".", ",")} km`
+                    : locationStatus}
+                </strong>
+                {recommendedCenter && <span>{locationStatus}</span>}
+              </div>
+              {recommendedCenter && recommendedCenter.id !== center.id ? (
+                <button className="outline" onClick={() => changeCenter(recommendedCenter)}>Usar recomendado</button>
+              ) : (
+                <button className="text-button" onClick={requestRecommendation}>Actualizar ubicación</button>
+              )}
+            </div>
             <div className="booking-box">
               <h3>1. Elige un horario disponible</h3>
               {loading ? (
@@ -927,22 +1103,30 @@ function Appointment({
                 </p>
               )}
               {error && <p className="form-error">{error}</p>}
-              <h3>2. Confirma tu reserva</h3>
-              <p className="muted">
-                {session
-                  ? `Sesión: ${session.user.fullName}`
-                  : "Debes iniciar sesión para reservar una ficha."}
-              </p>
+              <h3>2. Datos para tu ficha</h3>
+              <p className="muted">No necesitas crear una cuenta. Podrás consultar tu ficha después usando tu C.I.</p>
+              <div className="patient-form">
+                <label>Nombres completos
+                  <input value={patient.fullName} onChange={(event) => setPatient((current) => ({ ...current, fullName: event.target.value }))} placeholder="Ej. María Quispe Mamani" autoComplete="name" />
+                </label>
+                <label>Cédula de identidad
+                  <input value={patient.ci} onChange={(event) => setPatient((current) => ({ ...current, ci: event.target.value }))} placeholder="Ej. 1234567 LP" autoComplete="off" />
+                </label>
+                <label>Seguro médico
+                  <select value={patient.insuranceProvider} onChange={(event) => setPatient((current) => ({ ...current, insuranceProvider: event.target.value }))}>
+                    {INSURANCE_PROVIDERS.map((provider) => <option key={provider}>{provider}</option>)}
+                  </select>
+                </label>
+              </div>
+              <h3>3. Confirma tu reserva</h3>
               <button
                 className="primary full"
                 onClick={reserve}
-                disabled={saving || !selectedSlot}
+                disabled={saving || !selectedSlot || patient.fullName.trim().length < 3 || patient.ci.trim().length < 5}
               >
                 {saving
                   ? "Reservando…"
-                  : session
-                    ? "Confirmar ficha"
-                    : "Iniciar sesión para reservar"}
+                  : "Confirmar ficha"}
               </button>
             </div>
           </div>
@@ -969,6 +1153,15 @@ function Appointment({
               <br />
               {center.wait}
             </p>
+            <div className="nearby-alternatives">
+              <b>Otros centros cercanos</b>
+              {alternatives.length ? alternatives.map((item) => (
+                <button key={item.id} onClick={() => changeCenter(item)}>
+                  <span>{item.name}</span>
+                  <small>{item.distanceKm.toFixed(1).replace(".", ",")} km · {item.capacity} fichas</small>
+                </button>
+              )) : <small>Activa tu ubicación para ver alternativas cercanas.</small>}
+            </div>
           </aside>
         </div>
       )}
@@ -1479,14 +1672,8 @@ function OperatorDashboard({ navigate }: { navigate: (to: Route) => void }) {
     void (async () => {
       try {
         const result = await getCenters();
-        const permittedCenters =
-          session?.user.role === "OPERATOR"
-            ? result.filter(
-                (center) => center.id === session.user.assignedCenterId,
-              )
-            : result;
-        setOperatorCenters(permittedCenters);
-        setCenterId(permittedCenters[0]?.id ?? null);
+        setOperatorCenters(result);
+        setCenterId(result[0]?.id ?? null);
       } catch {
         setError(
           "No se pudo conectar al backend. Inícialo antes de usar el panel.",
@@ -1591,38 +1778,33 @@ function OperatorDashboard({ navigate }: { navigate: (to: Route) => void }) {
         current && (
           <div className="operator-layout">
             <aside className="operator-sidebar">
-              <b>Centro de salud</b>
+              <b>Centro de salud municipal</b>
               <p>
-                {session.user.role === "ADMIN"
-                  ? "Selecciona el establecimiento que administras."
-                  : "Centro asignado a tu cuenta."}
+                Selecciona el establecimiento que deseas actualizar.
               </p>
-              {session.user.role === "ADMIN" ? (
-                <label>
-                  Centro asignado
-                  <select
-                    value={String(centerId)}
-                    onChange={(e) => setCenterId(e.target.value)}
-                  >
-                    {operatorCenters.map((c) => (
-                      <option key={c.id} value={String(c.id)}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              ) : (
-                <div className="operator-center">
-                  <span>⌖</span>
-                  <div>
-                    <strong>{current.name}</strong>
-                    <small>{current.address}</small>
-                  </div>
+              <label>
+                Seleccionar centro
+                <select
+                  value={String(centerId)}
+                  onChange={(e) => setCenterId(e.target.value)}
+                >
+                  {operatorCenters.map((c) => (
+                    <option key={c.id} value={String(c.id)}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="operator-center">
+                <span>⌖</span>
+                <div>
+                  <strong>{current.name}</strong>
+                  <small>{current.address}</small>
                 </div>
-              )}
+              </div>
               <hr />
               <small>
-                El acceso está restringido al centro asignado a cada operador.
+                Puedes actualizar atención, fichas, espera y stock de todos los centros municipales.
               </small>
             </aside>
             <div className="operator-form">

@@ -7,6 +7,7 @@ import {
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
+import { type MutableRefObject, useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 import type { Center } from "../data";
 
@@ -22,9 +23,19 @@ function centerIcon(active: boolean) {
   });
 }
 
-function Recenter({ center }: { center: [number, number] }) {
+function FocusSelected({
+  selected,
+  markerRefs,
+}: {
+  selected: Center | null;
+  markerRefs: MutableRefObject<Record<string, L.Marker>>;
+}) {
   const map = useMap();
-  map.setView(center, 15, { animate: true });
+  useEffect(() => {
+    if (selected?.latitude === undefined || selected.longitude === undefined) return;
+    map.flyTo([selected.latitude, selected.longitude], 15, { animate: true, duration: 0.65 });
+    markerRefs.current[selected.id]?.openPopup();
+  }, [map, markerRefs, selected?.id, selected?.latitude, selected?.longitude]);
   return null;
 }
 
@@ -33,12 +44,15 @@ export function HealthMap({
   selected,
   userPosition,
   onSelect,
+  containerRef,
 }: {
   centers: Center[];
   selected: Center | null;
   userPosition: Position | null;
   onSelect: (center: Center) => void;
+  containerRef?: React.RefObject<HTMLDivElement | null>;
 }) {
+  const markerRefs = useRef<Record<string, L.Marker>>({});
   const availableCenters = centers.filter((center) => center.latitude !== undefined && center.longitude !== undefined);
   const focus: [number, number] = userPosition
     ? [userPosition.latitude, userPosition.longitude]
@@ -46,14 +60,14 @@ export function HealthMap({
       ? [selected.latitude, selected.longitude]
       : laPaz;
   return (
-    <div className="health-map">
+    <div className="health-map" ref={containerRef}>
       <MapContainer
         center={focus}
         zoom={13}
         scrollWheelZoom
         className="leaflet-map"
       >
-        <Recenter center={focus} />
+        <FocusSelected selected={selected} markerRefs={markerRefs} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -77,6 +91,9 @@ export function HealthMap({
             key={center.id}
             position={[center.latitude!, center.longitude!]}
             icon={centerIcon(selected?.id === center.id)}
+            ref={(marker) => {
+              if (marker) markerRefs.current[center.id] = marker;
+            }}
             eventHandlers={{ click: () => onSelect(center) }}
           >
             <Popup>

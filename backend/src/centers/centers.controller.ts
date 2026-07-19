@@ -4,7 +4,6 @@ import { FindCentersQuery } from './dto/find-centers.query';
 import { UpdateAvailabilityDto } from './dto/update-availability.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { OperatorGuard } from '../auth/operator.guard';
-import { AssignedCenterGuard } from '../auth/assigned-center.guard';
 
 @Controller('centers')
 export class CentersController {
@@ -37,7 +36,7 @@ export class CentersController {
   }
 
   @Patch(':id/availability')
-  @UseGuards(JwtAuthGuard, OperatorGuard, AssignedCenterGuard)
+  @UseGuards(JwtAuthGuard, OperatorGuard)
   async updateAvailability(@Param('id') id: string, @Body() update: UpdateAvailabilityDto) {
     const availability = await this.centersService.updateAvailability(id, update);
     if (!availability) throw new NotFoundException(`No existe un centro con id ${id}`);

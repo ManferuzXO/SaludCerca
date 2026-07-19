@@ -50,6 +50,20 @@ model Usuario {
   @@map("User")
 }
 
+model Paciente {
+  id                String   @id @default(uuid())
+  ciHash            String   @unique
+  ciLast4           String
+  fullName          String
+  insuranceProvider String
+  appointments      Ficha[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([ciLast4])
+  @@map("Patient")
+}
+
 model CentroSalud {
   id           String              @id @default(uuid())
   name         String
@@ -133,16 +147,19 @@ model TurnoFicha {
 
 model Ficha {
   id           String            @id @default(uuid())
-  userId       String
+  userId       String?
+  patientId    String?
   slotId       String
   status       AppointmentStatus @default(BOOKED)
   checkInCode  String            @unique
-  user         Usuario           @relation(fields: [userId], references: [id])
+  user         Usuario?          @relation(fields: [userId], references: [id])
+  patient      Paciente?         @relation(fields: [patientId], references: [id])
   slot         TurnoFicha        @relation(fields: [slotId], references: [id])
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
   @@index([userId, createdAt])
+  @@index([patientId, createdAt])
   @@index([slotId, status])
   @@map("Appointment")
 }
