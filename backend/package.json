@@ -1,0 +1,43 @@
+{
+  "name": "salud-cerca-api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start:dev": "npm run build && node dist/main.js",
+    "start:watch": "nest start --watch",
+    "start": "node dist/main.js",
+    "build": "nest build",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts",
+    "catalog:geocode": "tsx prisma/geocode-catalog.ts",
+    "catalog:apply-reviewed": "tsx prisma/apply-reviewed-geocodes.ts",
+    "catalog:import-official-map": "node --use-system-ca --import tsx prisma/import-official-map-coordinates.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "latest",
+    "@nestjs/core": "latest",
+    "@nestjs/jwt": "latest",
+    "@nestjs/platform-express": "latest",
+    "@prisma/client": "^6.19.0",
+    "bcryptjs": "latest",
+    "class-transformer": "latest",
+    "class-validator": "latest",
+    "dotenv": "latest",
+    "reflect-metadata": "latest",
+    "rxjs": "latest"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "latest",
+    "@nestjs/schematics": "latest",
+    "@nestjs/testing": "latest",
+    "@types/express": "latest",
+    "@types/node": "latest",
+    "prisma": "^6.19.0",
+    "ts-node": "latest",
+    "tsx": "latest",
+    "typescript": "^6.0.0"
+  }
+}

@@ -1,0 +1,428 @@
+{
+  "generatedAt": "2026-07-19T00:58:09.611Z",
+  "apply": false,
+  "report": [
+    {
+      "id": "a23c3449-61ff-4e55-841f-5db901b3d37a",
+      "name": "C.S. Asistencia Pública",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "30ac26c7-e661-469d-bd5a-ff81d752d6f6",
+      "name": "C.S. Juancito Pinto",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "3b942ee2-fafa-40b7-858e-b54972669fa8",
+      "name": "C.M.I. Tembladerani",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "0fc975fb-86a7-4966-aa5a-8e120705b140",
+      "name": "C.S. 8 de Diciembre",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "bec2add5-64f2-458f-9e94-c277871511d3",
+      "name": "C.S. Alcoreza",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "ca51c2c0-8e48-48fe-bf1d-5cc51c0d8e18",
+      "name": "C.S. Alto Tacagua",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "15a95fca-a3ee-462b-b1a5-70e5bf07ca24",
+      "name": "C.S. Bajo San Pedro",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "9bd71dc5-9886-43d1-943f-51fdc2c65d80",
+      "name": "C.S. Bajo Tacagua",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "ddb5c43e-5681-40dc-8522-b07d549f78e7",
+      "name": "C.S. Biblioteca",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "00eade97-4779-4860-95b9-fcbace46ce0e",
+      "name": "C.S. El Rosal",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "f69ed05f-f4b5-4d6c-9a59-e12c585b4f56",
+      "name": "C.S. El Vergel (Llojeta)",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "83309b75-2162-4272-9ab3-3e16a4276160",
+      "name": "C.S. La Gruta",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "76cc0af3-86bf-4ad7-9778-1c44aaa4aade",
+      "name": "C.S. Niño Kollo",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "28dbfba6-0ee9-4117-a39f-3091a88a2ab6",
+      "name": "C.S. Pasankery",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "447380d0-88a1-4bb8-9c05-4318d435f5cb",
+      "name": "C.S. San Luis",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "be5cc7be-5b81-4931-973c-3d089b2b7008",
+      "name": "C.S.I. Villa Nueva Potosí",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "b3467022-5334-4d5f-9c51-7d4a40319a5a",
+      "name": "C.S. Choquechihuani",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "693e17ab-e44d-4522-9e1a-ebe3b01e29bb",
+      "name": "C.S. Mallasa",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "e0fd166f-ea65-4880-9921-c7073695514b",
+      "name": "C.S. Mallasilla",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "708bb5d1-0445-4aaa-b309-e559de426165",
+      "name": "C.S. Alto Mariscal Santa Cruz",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "0a206014-5c1b-414a-bc3c-9a33503be61e",
+      "name": "C.S. Apumalla",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "7febc643-2f53-418a-aa49-6bda34efb09b",
+      "name": "C.S. Bajo Tejar",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "64bf18fc-6544-4090-a75c-c699e9755fcc",
+      "name": "C.S. Ciudadela Ferroviaria",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "19717f0e-dd71-40c3-99a0-c4323f48c9bf",
+      "name": "C.S. Munaypata",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "8c7ad2ec-8de5-460a-91b2-fbe58ff9289e",
+      "name": "C.S. Obispo Indaburo",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "21d7941b-a040-4445-a67b-4f7bcecbebff",
+      "name": "C.S. Panticirca",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "b2b4ed9a-a523-4fe1-b750-e5a7ba4914e0",
+      "name": "C.S. Said",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "5de8aeb8-84a0-46d9-b1f0-9251d2aa56ee",
+      "name": "C.S. Villa Victoria",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "0b581d14-a78e-4594-8595-72d397b47d3c",
+      "name": "C.S.I. Chamoco Chico",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "3316207a-54e4-49ed-be0a-c0ba771606eb",
+      "name": "C.S.I. El Tejar",
+      "status": "CANDIDATE",
+      "candidate": {
+        "place_id": 4143325,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 1083925341,
+        "lat": "-16.4975278",
+        "lon": "-68.1560009",
+        "category": "building",
+        "type": "hospital",
+        "place_rank": 30,
+        "importance": 0.00006890897993434069,
+        "addresstype": "building",
+        "name": "C.S.I. El Tejar",
+        "display_name": "C.S.I. El Tejar, Calle Damas de Cotagaita, El Tejar, Max Paredes, Municipio Nuestra Señora de La Paz, Provincia Pedro Domingo Murillo, La Paz, Bolivia",
+        "boundingbox": [
+          "-16.4976998",
+          "-16.4973772",
+          "-68.1561635",
+          "-68.1557729"
+        ]
+      }
+    },
+    {
+      "id": "60153ca6-16a5-403b-8782-b0783815e3ce",
+      "name": "C.S.M.I. La Portada",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "674e2b54-6c8e-44eb-8659-564f25846905",
+      "name": "C.S. 18 de Mayo",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "a9028b48-1646-4673-bb03-514576b0801b",
+      "name": "C.S. Agua de la Vida",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "e1feade7-c6cb-4033-b852-68a8f5ab1efc",
+      "name": "C.S. Alto Miraflores",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "b04f8bb4-498b-440e-bfa1-55e32ff8567c",
+      "name": "C.S. Chuquiaguillo",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "34113787-8fb4-48cc-8283-2f9e3861063d",
+      "name": "C.S. El Calvario",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "a7e1eb58-f904-4b69-a721-43444d1b3341",
+      "name": "C.S. Las Delicias Central",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "f122321b-97c1-4691-bd73-ccfca1df6580",
+      "name": "C.S. Plan Autopista",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "ae3b325f-4be6-4427-bd3f-5c92175986c0",
+      "name": "C.S. San José de Natividad",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "9903523e-a420-4921-a1c3-2e4f0e54313c",
+      "name": "C.S. San Juan Lazareto",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "9a7e2f94-d1f1-446d-9dde-22c5c04185da",
+      "name": "C.S. Villa Fátima - Las Delicias",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "4d727b35-e7bc-4708-959a-54f7c18cbe87",
+      "name": "C.S. Vino Tinto",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "a76f753e-a20f-4149-a651-5fa07f58b9be",
+      "name": "C.S.I. Achachicala",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "efdc9e0a-fccc-4ad3-87be-4b4138433d49",
+      "name": "Hospital Municipal La Merced",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "99789e68-3970-4523-b696-3cd0557761b3",
+      "name": "C.S. Escobar Uría",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "e8a73f7d-3b06-4f70-a411-d391df5b2e38",
+      "name": "C.S. Kupini",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "3f092db3-ab0c-4ff7-9f3b-0fa9aead0089",
+      "name": "C.S. Pampahasi Alto",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "f106384e-21ed-4c53-ada7-81c17bcc89d2",
+      "name": "C.S. Pampahasi Bajo",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "05c02956-0415-4f62-abbc-2bef7510f5a1",
+      "name": "C.S. San Antonio Alto",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "f442ce35-df53-4254-b843-30912ebc80f8",
+      "name": "C.S. San Antonio Bajo",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "6eb342ed-fc8c-4c69-94fc-d7a2e9415be9",
+      "name": "C.S. San Isidro",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "e7edb5ab-94ff-43d4-a920-834ddf44c72d",
+      "name": "C.S. Valle Hermoso",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "b1329133-1490-4cc8-b4af-028dd0dbf6cb",
+      "name": "C.S. Villa Copacabana (Pacasa)",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "8898d832-14c3-4b17-a473-c81a285f5d6c",
+      "name": "C.S. Villa Salomé",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "3b3f233e-28f2-4a5b-ae15-78610e6262c6",
+      "name": "C.S.I. Villa Armonía",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "47403087-c476-4e87-ac4d-447201c5c762",
+      "name": "C.S. Achumani",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "9f4b8b0b-a312-46bf-86d6-5df41b4433dc",
+      "name": "C.S. Alto Irpavi",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "e55fd167-2ca9-4bae-9387-a47ad9134d6c",
+      "name": "C.S. Alto Obrajes",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "c100c7cd-bef4-48f2-a0fa-22f2afdc64c8",
+      "name": "C.S. Alto Següencoma",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "84b6542d-3b3e-4d5a-9baf-b3a5ef8b8348",
+      "name": "C.S. Bajo Llojeta",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "cd7e1f73-42d3-4e23-9865-17e103809b2c",
+      "name": "C.S. Bolognia",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "8a37f828-2daf-41e9-8de8-fd2a882681f9",
+      "name": "C.S. Chasquipampa E. Sáenz",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "e672d11f-ab95-40f2-abe0-a6d9be0a3178",
+      "name": "C.S. Cota Cota (Los Pinos)",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "e0cfe212-4d65-4f19-9377-dac2dc0e7726",
+      "name": "C.S. Obrajes",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "bf590e0c-8d32-42aa-b2c6-beb4d3341a45",
+      "name": "C.S.I. Bella Vista",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "8170414c-4043-4dfa-8d1a-b129bef38c65",
+      "name": "C.S. Camsique Zongo",
+      "status": "NOT_FOUND",
+      "candidate": null
+    },
+    {
+      "id": "ea42ba1a-de70-4bc1-916b-49cfa975520a",
+      "name": "P.S. Zongo Choro",
+      "status": "NOT_FOUND",
+      "candidate": null
+    }
+  ]
+}

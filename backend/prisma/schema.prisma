@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CITIZEN
+  OPERATOR
+  ADMIN
+}
+
+enum StockStatus {
+  AVAILABLE
+  LOW
+  OUT_OF_STOCK
+}
+
+enum AppointmentStatus {
+  BOOKED
+  CANCELLED
+  CHECKED_IN
+  COMPLETED
+  NO_SHOW
+}
+
+enum LocationVerification {
+  VERIFIED
+  PENDING
+}
+
+model Usuario {
+  id              String              @id @default(uuid())
+  fullName        String
+  phone           String?             @unique
+  email           String?             @unique
+  passwordHash    String?
+  role            UserRole            @default(CITIZEN)
+  assignedCenterId String?
+  assignedCenter  CentroSalud?              @relation("OperatorCenter", fields: [assignedCenterId], references: [id])
+  appointments    Ficha[]
+  audits          AuditoriaDisponibilidad[] @relation("UpdatedBy")
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([role])
+  @@map("User")
+}
+
+model CentroSalud {
+  id           String              @id @default(uuid())
+  name         String
+  kind         String
+  network      String?
+  macrodistrict String?
+  level        Int                 @default(1)
+  address      String
+  latitude     Decimal?            @db.Decimal(9, 6)
+  longitude    Decimal?            @db.Decimal(9, 6)
+  phone        String?
+  hours        String?
+  isOpen       Boolean             @default(true)
+  estimatedWaitMinutes Int         @default(0)
+  services     ServicioSalud[]
+  slots        TurnoFicha[]
+  medicines    StockMedicamento[]
+  operators    Usuario[]                   @relation("OperatorCenter")
+  audits       AuditoriaDisponibilidad[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@index([macrodistrict])
+  @@index([network])
+  @@map("HealthCenter")
+}
+
+model CatalogoCentroMunicipal {
+  id                 String               @id @default(uuid())
+  name               String               @unique
+  macrodistrict      String
+  district           Int
+  network            String
+  level              Int
+  address            String?
+  latitude           Decimal?             @db.Decimal(9, 6)
+  longitude          Decimal?             @db.Decimal(9, 6)
+  locationStatus     LocationVerification @default(PENDING)
+  source             String
+  sourceUpdatedAt    DateTime?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  @@index([macrodistrict, district])
+  @@index([locationStatus])
+}
+
+model ServicioSalud {
+  id        String       @id @default(uuid())
+  centerId  String
+  name      String
+  category  String?
+  isActive  Boolean      @default(true)
+  center    CentroSalud @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  slots     TurnoFicha[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([centerId, name])
+  @@map("HealthService")
+}
+
+model TurnoFicha {
+  id          String        @id @default(uuid())
+  centerId    String
+  serviceId   String
+  startsAt    DateTime
+  capacity    Int
+  reserved    Int           @default(0)
+  center      CentroSalud   @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  service     ServicioSalud @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  appointments Ficha[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([centerId, startsAt])
+  @@index([serviceId, startsAt])
+  @@unique([serviceId, startsAt])
+  @@map("AppointmentSlot")
+}
+
+model Ficha {
+  id           String            @id @default(uuid())
+  userId       String
+  slotId       String
+  status       AppointmentStatus @default(BOOKED)
+  checkInCode  String            @unique
+  user         Usuario           @relation(fields: [userId], references: [id])
+  slot         TurnoFicha        @relation(fields: [slotId], references: [id])
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([slotId, status])
+  @@map("Appointment")
+}
+
+model StockMedicamento {
+  id          String       @id @default(uuid())
+  centerId    String
+  medicineName String
+  status      StockStatus  @default(AVAILABLE)
+  quantity    Int?
+  updatedAt   DateTime     @updatedAt
+  center      CentroSalud @relation(fields: [centerId], references: [id], onDelete: Cascade)
+
+  @@unique([centerId, medicineName])
+  @@index([status])
+  @@map("MedicineStock")
+}
+
+model AuditoriaDisponibilidad {
+  id          String       @id @default(uuid())
+  centerId    String
+  updatedById String?
+  field       String
+  previous    String?
+  current     String
+  center      CentroSalud @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  updatedBy   Usuario?    @relation("UpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime     @default(now())
+
+  @@index([centerId, createdAt])
+  @@map("AvailabilityAudit")
+}
