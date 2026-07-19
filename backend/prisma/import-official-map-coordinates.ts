@@ -1,8 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+// La capa oficial actualmente presenta un certificado HTTPS incompleto. Se usa
+// su endpoint HTTP de solo lectura para que el proceso sea reproducible tanto
+// en desarrollo como en Render; los datos se validan por nombre y macrodistrito.
 const sourceUrl =
-  'https://sitservicios.lapaz.bo/sit/ods/mapas/Mapa_5/data/CentrosdeSalud1.js';
+  'http://sitservicios.lapaz.bo/sit/ods/mapas/Mapa_5/data/CentrosdeSalud1.js';
 const apply = process.argv.includes('--apply');
 
 type OfficialFeature = {
@@ -84,6 +87,14 @@ async function main() {
         source: `GAMLP Mapa Nº 5 (2017), capa oficial: ${feature.properties.nombre}`,
         sourceUpdatedAt: new Date(),
       },
+    });
+
+    // El catálogo se transforma en centros operativos durante el seed. Al
+    // verificar una ubicación posteriormente, hay que reflejarla también en
+    // ese registro; de otro modo la tarjeta existe pero el marcador no aparece.
+    await prisma.centroSalud.updateMany({
+      where: { name: center.name },
+      data: { latitude, longitude },
     });
   }
 
