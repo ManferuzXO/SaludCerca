@@ -211,9 +211,8 @@ export class AssistantService {
           contents: [{ role: 'user', parts: [{ text: message }] }],
           generationConfig: {
             temperature: 0.2,
-            // Gemini 3.5 puede usar parte de este presupuesto para razonamiento interno.
-            // Dejamos margen suficiente para que no corte una orientación breve.
-            maxOutputTokens: 800,
+            // Una respuesta breve mejora la lectura y reduce la latencia de voz.
+            maxOutputTokens: 260,
             thinkingConfig: { thinkingLevel: 'minimal' },
           },
           store: false,
@@ -226,7 +225,7 @@ export class AssistantService {
       }
 
       const content = this.readGeminiText((await response.json()) as GeminiContentResponse);
-      return content ? content.slice(0, 1400) : null;
+      return content ? content.slice(0, 700) : null;
     } catch {
       this.logger.warn('No se pudo conectar con Gemini. Se usará orientación segura local.');
       return null;

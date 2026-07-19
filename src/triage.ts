@@ -42,7 +42,7 @@ export function createTriageReply(message: string): TriageReply {
     return {
       level: "emergency",
       title: "Podría ser una emergencia",
-      text: "No esperes una respuesta del chat ni intentes resolverlo aquí. Llama a Auxilio La Paz 167 o acude al servicio de emergencias más cercano ahora.",
+      text: "Llama a Auxilio La Paz 167 o acude a emergencias ahora.",
       action: "call-emergency",
     };
   }
@@ -64,7 +64,7 @@ export function createTriageReply(message: string): TriageReply {
     return {
       level: "priority",
       title: "Busca valoración médica hoy",
-      text: "Por lo que describes, es recomendable que un profesional te evalúe hoy. SaludCerca puede ordenar los centros verificados desde el más cercano a tu ubicación.",
+      text: "Es recomendable una valoración médica hoy. Busca el centro más cercano y solicita una ficha.",
       action: "find-center",
     };
   }
@@ -72,7 +72,7 @@ export function createTriageReply(message: string): TriageReply {
   return {
     level: "general",
     title: "Orientación inicial",
-    text: "No puedo diagnosticar ni indicar tratamientos. Para una consulta no urgente, busca el centro más cercano y agenda una ficha. Si los síntomas empeoran o aparece una señal de alarma, llama al 167.",
+      text: "Para una consulta no urgente, busca el centro más cercano y solicita una ficha. Si empeora, llama al 167.",
     action: "find-center",
   };
 }
