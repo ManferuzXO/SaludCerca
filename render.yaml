@@ -9,7 +9,7 @@ services:
     buildCommand: npm ci --include=dev && npm run build && cd backend && npm ci --include=dev && npm run db:generate && npm run build
     # Recupera únicamente el primer intento fallido de la migración inicial,
     # aplica el historial y carga datos idempotentes antes de iniciar la API.
-    startCommand: cd backend && (./node_modules/.bin/prisma migrate resolve --rolled-back 20260718190000_add_appointment_slot_unique || true) && npm run db:deploy && npm run db:seed && npm run catalog:import-official-map -- --apply && npm run start
+    startCommand: cd backend && (./node_modules/.bin/prisma migrate resolve --rolled-back 20260718190000_add_appointment_slot_unique || true) && npm run db:deploy && npm run db:seed && npm run start
     healthCheckPath: /api/health
     autoDeployTrigger: commit
     envVars:

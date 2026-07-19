@@ -1,6 +1,7 @@
 import { PrismaClient, StockStatus, UserRole } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 import { municipalCatalog } from "./data/municipal-catalog";
+import { officialMunicipalLocations } from "./data/official-municipal-locations";
 
 const prisma = new PrismaClient();
 
@@ -143,6 +144,7 @@ const firstLevelBaseServices = [
 
 async function main() {
   for (const entry of municipalCatalog) {
+    const officialLocation = officialMunicipalLocations[entry.name];
     const existingCatalog = await prisma.catalogoCentroMunicipal.findUnique({ where: { name: entry.name } });
     const operationalCenter = entry.locationStatus === "VERIFIED"
       ? await prisma.centroSalud.findFirst({ where: { name: entry.name } })
@@ -151,19 +153,19 @@ async function main() {
       where: { name: entry.name },
       update: {
         macrodistrict: entry.macrodistrict, district: entry.district, network: entry.network, level: entry.level,
-        locationStatus: existingCatalog?.locationStatus === "VERIFIED" ? "VERIFIED" : entry.locationStatus,
+        locationStatus: officialLocation || existingCatalog?.locationStatus === "VERIFIED" ? "VERIFIED" : entry.locationStatus,
         address: operationalCenter?.address ?? existingCatalog?.address ?? null,
-        latitude: operationalCenter?.latitude ?? existingCatalog?.latitude ?? null,
-        longitude: operationalCenter?.longitude ?? existingCatalog?.longitude ?? null,
+        latitude: officialLocation?.latitude ?? operationalCenter?.latitude ?? existingCatalog?.latitude ?? null,
+        longitude: officialLocation?.longitude ?? operationalCenter?.longitude ?? existingCatalog?.longitude ?? null,
         source: existingCatalog?.source ?? "GAMLP Anuario 2021, Anexo 4.14",
         sourceUpdatedAt: existingCatalog?.sourceUpdatedAt ?? new Date("2022-01-01"),
       },
       create: {
         name: entry.name, macrodistrict: entry.macrodistrict, district: entry.district, network: entry.network, level: entry.level,
-        locationStatus: entry.locationStatus,
+        locationStatus: officialLocation ? "VERIFIED" : entry.locationStatus,
         address: operationalCenter?.address ?? null,
-        latitude: operationalCenter?.latitude ?? null,
-        longitude: operationalCenter?.longitude ?? null,
+        latitude: officialLocation?.latitude ?? operationalCenter?.latitude ?? null,
+        longitude: officialLocation?.longitude ?? operationalCenter?.longitude ?? null,
         source: "GAMLP Anuario 2021, Anexo 4.14",
         sourceUpdatedAt: new Date("2022-01-01"),
       },
@@ -244,6 +246,14 @@ async function main() {
           isOpen: true,
           estimatedWaitMinutes: 10 + (index % 4) * 5,
         },
+      });
+    }
+
+    const officialLocation = officialMunicipalLocations[catalog.name];
+    if (officialLocation) {
+      await prisma.centroSalud.updateMany({
+        where: { name: catalog.name },
+        data: officialLocation,
       });
     }
 
