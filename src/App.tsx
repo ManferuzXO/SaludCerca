@@ -1114,19 +1114,6 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
     try {
       stopSpeech();
       setSpeaking(true);
-      if ("speechSynthesis" in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "es-BO";
-        utterance.rate = 1;
-        const spanishVoice = window.speechSynthesis
-          .getVoices()
-          .find((voice) => voice.lang.toLowerCase().startsWith("es"));
-        if (spanishVoice) utterance.voice = spanishVoice;
-        utterance.onend = () => setSpeaking(false);
-        utterance.onerror = () => setSpeaking(false);
-        window.speechSynthesis.speak(utterance);
-        return;
-      }
       const response = await synthesizeAssistantSpeech(text);
       if (!response.available || !response.audio) throw new Error("Voz no disponible");
       const bytes = Uint8Array.from(atob(response.audio), (character) => character.charCodeAt(0));
@@ -1139,8 +1126,26 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
       };
       await player.play();
     } catch {
+      // Respaldo inmediato para navegadores que incluyen voz nativa. Así la
+      // función sigue siendo útil si el proveedor TTS está temporalmente caído.
+      if ("speechSynthesis" in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "es-BO";
+        utterance.rate = 1;
+        const spanishVoice = window.speechSynthesis
+          .getVoices()
+          .find((voice) => voice.lang.toLowerCase().startsWith("es"));
+        if (spanishVoice) utterance.voice = spanishVoice;
+        utterance.onend = () => setSpeaking(false);
+        utterance.onerror = () => {
+          setSpeaking(false);
+          setVoiceError("No se pudo reproducir la respuesta por voz. Puedes leerla en pantalla.");
+        };
+        window.speechSynthesis.speak(utterance);
+        return;
+      }
       setSpeaking(false);
-      setVoiceError("No se pudo generar la respuesta por voz. Puedes leer la respuesta en pantalla.");
+      setVoiceError("No se pudo generar la respuesta por voz. Puedes leerla en pantalla.");
     }
   };
 

@@ -128,11 +128,14 @@ export class AssistantService {
         return { audio: '', mimeType: 'audio/wav', available: false };
       }
 
+      // Interactions API devuelve el último bloque como output_audio.
+      // La forma anterior (steps/content) corresponde a una respuesta distinta
+      // y hacía que la web recibiera "Voz no disponible" aunque Gemini sí
+      // hubiera generado el audio.
       const body = (await response.json()) as {
-        steps?: Array<{ content?: Array<{ type?: string; data?: string; sample_rate?: number }> }>;
+        output_audio?: { data?: string; sample_rate?: number };
       };
-      const audio = body.steps?.flatMap((step) => step.content ?? [])
-        .find((content) => content.type === 'audio' && content.data);
+      const audio = body.output_audio;
       if (!audio?.data) return { audio: '', mimeType: 'audio/wav', available: false };
 
       const wav = this.pcmToWav(Buffer.from(audio.data, 'base64'), audio.sample_rate ?? 24000);
