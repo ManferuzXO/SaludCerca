@@ -6,7 +6,7 @@ services:
     name: saludcerca-manferuzxo
     region: oregon
     plan: free
-    buildCommand: npm ci && npm run build && cd backend && npm ci && npm run db:generate && npm run build
+    buildCommand: npm ci --include=dev && npm run build && cd backend && npm ci --include=dev && npm run db:generate && npm run build
     initialDeployHook: cd backend && npm run db:seed
     startCommand: cd backend && npm run db:deploy && npm run start
     healthCheckPath: /api/health
