@@ -68,13 +68,26 @@ function useTheme() {
     const saved = localStorage.getItem(THEME_KEY);
     return saved === "light" || saved === "dark" ? saved : "auto";
   });
+  const [systemTheme, setSystemTheme] = useState<"light" | "dark">(() =>
+    window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const syncSystemTheme = () => setSystemTheme(mediaQuery.matches ? "dark" : "light");
+
+    syncSystemTheme();
+    mediaQuery.addEventListener("change", syncSystemTheme);
+    return () => mediaQuery.removeEventListener("change", syncSystemTheme);
+  }, []);
+
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "auto") root.removeAttribute("data-theme");
-    else root.dataset.theme = theme;
+    root.dataset.theme = theme === "auto" ? systemTheme : theme;
+    root.dataset.themeMode = theme;
     localStorage.setItem(THEME_KEY, theme);
-  }, [theme]);
-  return { theme, setTheme };
+  }, [theme, systemTheme]);
+  return { theme, systemTheme, setTheme };
 }
 
 const Icon = ({ children }: { children: string }) => (
@@ -101,11 +114,13 @@ function Header({
   navigate,
   route,
   theme,
+  systemTheme,
   setTheme,
 }: {
   navigate: (to: Route) => void;
   route: Route;
   theme: ThemeMode;
+  systemTheme: "light" | "dark";
   setTheme: (theme: ThemeMode) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -124,34 +139,34 @@ function Header({
       </button>
       <nav className="desktop-nav">
         <button
-          className={route === "/" ? "nav-active" : ""}
+          className={`${route === "/" ? "nav-active " : ""}button-icon icon-home`}
           onClick={() => go("/")}
         >
           Inicio
         </button>
         <button
-          className={route === "/centros" ? "nav-active" : ""}
+          className={`${route === "/centros" ? "nav-active " : ""}button-icon icon-centers`}
           onClick={() => go("/centros")}
         >
           Centros de salud
         </button>
         <button
-          className={route === "/como-funciona" ? "nav-active" : ""}
+          className={`${route === "/como-funciona" ? "nav-active " : ""}button-icon icon-help`}
           onClick={() => go("/como-funciona")}
         >
           ¿Cómo funciona?
         </button>
       </nav>
       <button
-        className="theme-toggle"
+        className="theme-toggle button-icon icon-refresh"
         onClick={() => setTheme(theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto")}
         aria-label={`Cambiar tema. Tema actual: ${theme === "auto" ? "automático" : theme === "dark" ? "oscuro" : "claro"}`}
         title="Cambiar tema"
       >
-        Tema: {theme === "auto" ? "Auto" : theme === "dark" ? "Oscuro" : "Claro"}
+        Tema: {theme === "auto" ? `Auto (${systemTheme === "dark" ? "Oscuro" : "Claro"})` : theme === "dark" ? "Oscuro" : "Claro"}
       </button>
       <button
-        className="profile"
+        className="profile button-icon icon-history"
         onClick={() => (session ? (clearSession(), go("/")) : go("/mis-fichas"))}
       >
         <Icon>◉</Icon> {session ? "Salir" : "Mis fichas"}
@@ -225,12 +240,12 @@ function Footer({ navigate }: { navigate: (to: Route) => void }) {
       </div>
       <p>Conectamos a las personas con la atención que necesitan.</p>
       <div>
-        <button onClick={() => navigate("/centros")}>Centros</button>
-        <button onClick={() => navigate("/asistente")}>Asistente</button>
+        <button className="button-icon icon-location" onClick={() => navigate("/centros")}>Centros</button>
+        <button className="button-icon icon-chat" onClick={() => navigate("/asistente")}>Asistente</button>
       </div>
       <small>Proyecto académico · Datos de demostración</small>
       <button
-        className="operator-shortcut"
+        className="operator-shortcut button-icon icon-user"
         onClick={() => navigate("/operador")}
         aria-label="Acceso para personal operador"
         title="Acceso para personal operador"
@@ -498,7 +513,7 @@ function MyAppointmentsPage({ navigate }: { navigate: (to: Route) => void }) {
 
 export default function App() {
   const { route, navigate } = useRoute();
-  const { theme, setTheme } = useTheme();
+  const { theme, systemTheme, setTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [center, setCenter] = useState(centers[0]);
   useEffect(() => {
@@ -526,7 +541,13 @@ export default function App() {
     );
   return (
     <>
-      <Header navigate={navigate} route={route} theme={theme} setTheme={setTheme} />
+      <Header
+        navigate={navigate}
+        route={route}
+        theme={theme}
+        systemTheme={systemTheme}
+        setTheme={setTheme}
+      />
       <CitizenActions navigate={navigate} route={route} />
       <main>{page}</main>
       <Footer navigate={navigate} />
@@ -548,11 +569,11 @@ function Home({ navigate }: { navigate: (to: Route) => void }) {
             municipales de tu ciudad.
           </p>
           <div className="hero-actions">
-            <button className="primary" onClick={() => navigate("/centros")}>
-              Buscar un centro →
+            <button className="primary button-icon icon-search" onClick={() => navigate("/centros")}>
+              Buscar un centro
             </button>
-            <button className="outline" onClick={() => navigate("/asistente")}>
-              ✦ Hablar con el asistente
+            <button className="outline button-icon icon-chat" onClick={() => navigate("/asistente")}>
+              Hablar con el asistente
             </button>
           </div>
           <div className="emergency">
@@ -572,18 +593,15 @@ function Home({ navigate }: { navigate: (to: Route) => void }) {
         </div>
       </section>
       <section className="quick-links">
-        <button onClick={() => navigate("/centros")}>
-          <span>⌖</span>
+        <button className="button-icon icon-location" onClick={() => navigate("/centros")}>
           <b>Encuentra atención</b>
           <small>Centros cerca de ti</small>
         </button>
-        <button onClick={() => navigate("/ficha")}>
-          <span>▣</span>
+        <button className="button-icon icon-ticket" onClick={() => navigate("/ficha")}>
           <b>Solicita tu ficha</b>
           <small>Reserva tu atención</small>
         </button>
-        <button onClick={() => navigate("/asistente")}>
-          <span>✦</span>
+        <button className="button-icon icon-chat" onClick={() => navigate("/asistente")}>
           <b>Orientación inicial</b>
           <small>Habla con el asistente</small>
         </button>
@@ -740,7 +758,7 @@ function Centers({
             <option>Farmacia</option>
           </select>
         </div>
-        <button className="locate" onClick={locate}>
+        <button className="locate button-icon icon-location" onClick={locate}>
           <Icon>⌖</Icon> Usar mi ubicación
         </button>
       </div>
@@ -753,7 +771,7 @@ function Centers({
           </h2>
           <p>{error || locationMessage || "Datos obtenidos desde SaludCerca API"}</p>
         </div>
-        <button className="filter" onClick={() => void loadCenters()}>
+        <button className="filter button-icon icon-refresh" onClick={() => void loadCenters()}>
           ↻ Actualizar
         </button>
       </div>
@@ -765,7 +783,7 @@ function Centers({
             <strong>{recommended.name}</strong>
             <p>{recommended.distance} · {recommended.macrodistrict}</p>
           </div>
-          <button onClick={() => select(recommended)}>Ver centro</button>
+          <button className="button-icon icon-location" onClick={() => select(recommended)}>Ver centro</button>
         </div>
       )}
       {error ? (
@@ -859,7 +877,7 @@ function CenterCard({
             : "Sin fichas hoy"}
         </span>
         <button
-          className="text-button"
+          className="text-button button-icon icon-ticket"
           onClick={(e) => {
             e.stopPropagation();
             onDetails();
@@ -1018,7 +1036,7 @@ function Appointment({
     }).format(new Date(slot.startsAt));
   return (
     <section className="booking page">
-      <button className="back" onClick={() => navigate("/centros")}>
+      <button className="back button-icon icon-back" onClick={() => navigate("/centros")}>
         ← Volver a centros
       </button>
       {appointment ? (
@@ -1041,7 +1059,7 @@ function Appointment({
               {appointment.service}
             </p>
           </div>
-          <button className="primary" onClick={() => navigate("/")}>
+          <button className="primary button-icon icon-location" onClick={() => navigate("/")}>
             Volver al inicio
           </button>
         </div>
@@ -1066,9 +1084,9 @@ function Appointment({
                 {recommendedCenter && <span>{locationStatus}</span>}
               </div>
               {recommendedCenter && recommendedCenter.id !== center.id ? (
-                <button className="outline" onClick={() => changeCenter(recommendedCenter)}>Usar recomendado</button>
+                <button className="outline button-icon icon-location" onClick={() => changeCenter(recommendedCenter)}>Usar recomendado</button>
               ) : (
-                <button className="text-button" onClick={requestRecommendation}>Actualizar ubicación</button>
+                <button className="text-button button-icon icon-refresh" onClick={requestRecommendation}>Actualizar ubicación</button>
               )}
             </div>
             <div className="booking-box">
@@ -1083,8 +1101,8 @@ function Appointment({
                     <button
                       className={
                         selectedSlot?.id === item.id
-                          ? "slot selected-slot"
-                          : "slot"
+                          ? "slot selected-slot button-icon icon-calendar"
+                          : "slot button-icon icon-calendar"
                       }
                       key={item.id}
                       onClick={() => setSelectedSlot(item)}
@@ -1120,7 +1138,7 @@ function Appointment({
               </div>
               <h3>3. Confirma tu reserva</h3>
               <button
-                className="primary full"
+                className="primary full button-icon icon-ticket"
                 onClick={reserve}
                 disabled={saving || !selectedSlot || patient.fullName.trim().length < 3 || patient.ci.trim().length < 5}
               >
@@ -1156,7 +1174,7 @@ function Appointment({
             <div className="nearby-alternatives">
               <b>Otros centros cercanos</b>
               {alternatives.length ? alternatives.map((item) => (
-                <button key={item.id} onClick={() => changeCenter(item)}>
+                <button className="button-icon icon-location" key={item.id} onClick={() => changeCenter(item)}>
                   <span>{item.name}</span>
                   <small>{item.distanceKm.toFixed(1).replace(".", ",")} km · {item.capacity} fichas</small>
                 </button>
@@ -1431,7 +1449,7 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
           Describe lo que necesitas por texto. Este asistente te orienta, pero
           no reemplaza a un profesional de salud.
         </p>
-        <button className="outline" onClick={() => navigate("/centros")}>
+        <button className="outline button-icon icon-location" onClick={() => navigate("/centros")}>
           Ver centros disponibles →
         </button>
       </div>
@@ -1461,7 +1479,7 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
                 <a className="triage-action emergency-action" href="tel:167">Llamar a Auxilio La Paz 167</a>
               )}
               {m.triage?.action === "find-center" && (
-                <button className="triage-action" onClick={() => navigate("/centros")}>Encontrar el centro más cercano</button>
+                <button className="triage-action button-icon icon-location" onClick={() => navigate("/centros")}>Encontrar el centro más cercano</button>
               )}
             </div>
           ))}
@@ -1475,7 +1493,7 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
             disabled={sending || recording || transcribing}
           />
           <button
-            className={`voice-button ${recording ? "listening" : ""}`}
+            className={`voice-button button-icon icon-chat ${recording ? "listening" : ""}`}
             type="button"
             onClick={recording ? stopVoiceInput : startVoiceInput}
             disabled={sending || transcribing}
@@ -1484,11 +1502,11 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
           >
             {recording ? "Detener" : transcribing ? "Procesando" : "Hablar"}
           </button>
-          <button className="send-button" onClick={send} disabled={sending || recording || transcribing}>{sending ? "Enviando" : "Enviar"}</button>
+          <button className="send-button button-icon icon-send" onClick={send} disabled={sending || recording || transcribing}>{sending ? "Enviando" : "Enviar"}</button>
         </div>
         {recording && <p className="voice-status">Grabando… pulsa Detener cuando termines.</p>}
         {transcribing && <p className="voice-status">Transcribiendo tu consulta…</p>}
-        {speaking && <button className="stop-speaking" onClick={stopSpeech}>■ Detener audio</button>}
+        {speaking && <button className="stop-speaking button-icon icon-close" onClick={stopSpeech}>■ Detener audio</button>}
         {voiceError && <p className="voice-error">{voiceError}</p>}
       </div>
     </section>

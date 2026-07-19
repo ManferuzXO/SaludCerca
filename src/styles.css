@@ -11,6 +11,20 @@
   color: var(--ink);
   background: var(--cream);
   color-scheme: light dark;
+  --icon-location: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s6-5.1 6-11a6 6 0 1 0-12 0c0 5.9 6 11 6 11Z' fill='none' stroke='black' stroke-width='2'/%3E%3Ccircle cx='12' cy='10' r='2' fill='black'/%3E%3C/svg%3E");
+  --icon-search: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='6' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='m16 16 4 4' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --icon-chat: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 11a7 7 0 0 1-7 7H7l-3 3v-10a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --icon-ticket: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 7a2 2 0 0 0 0 4v6h16v-6a2 2 0 0 0 0-4V5H4v2Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M12 5v12' fill='none' stroke='black' stroke-width='2' stroke-dasharray='2 2'/%3E%3C/svg%3E");
+  --icon-calendar: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='4' y='5' width='16' height='15' rx='2' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M8 3v4m8-4v4M4 10h16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --icon-history: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 12a8 8 0 1 0 2.3-5.7L4 8.5M4 4v4.5h4.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M12 8v5l3 2' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --icon-user: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='3.5' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M5 20a7 7 0 0 1 14 0' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --icon-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m4 11 8-7 8 7v9H4v-9Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M9 20v-5h6v5' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --icon-centers: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 21V5h14v16M9 21v-4h6v4M8 9h2m4 0h2m-8 4h2m4 0h2' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M12 6v6m-3-3h6' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --icon-help: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M9.5 9a2.7 2.7 0 1 1 4.5 2 3 3 0 0 0-1.5 2.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M12 17h.01' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --icon-refresh: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 11a8 8 0 1 0 2 5.3M20 4v7h-7' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --icon-send: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m21 3-7 18-3.8-7.2L3 10l18-7Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='m10.2 13.8 4.3-4.3' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --icon-back: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 12H5m6-6-6 6 6 6' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --icon-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 6 12 12M18 6 6 18' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 * {
   box-sizing: border-box;
@@ -27,6 +41,44 @@ select {
 button {
   cursor: pointer;
   border: 0;
+}
+/* Iconos SVG semánticos, sin emojis ni imágenes externas. */
+.button-icon::after {
+  content: "";
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-left: 7px;
+  vertical-align: -2px;
+  background: currentColor;
+  -webkit-mask: var(--button-icon) center / contain no-repeat;
+  mask: var(--button-icon) center / contain no-repeat;
+  transform-origin: center;
+}
+.button-icon:hover::after {
+  animation: button-icon-motion 0.48s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.button-icon:active::after {
+  transform: scale(0.84);
+}
+.icon-search { --button-icon: var(--icon-search); }
+.icon-location { --button-icon: var(--icon-location); }
+.icon-refresh { --button-icon: var(--icon-refresh); }
+.icon-send { --button-icon: var(--icon-send); }
+.icon-back { --button-icon: var(--icon-back); }
+.icon-close { --button-icon: var(--icon-close); }
+.icon-chat { --button-icon: var(--icon-chat); }
+.icon-ticket { --button-icon: var(--icon-ticket); }
+.icon-calendar { --button-icon: var(--icon-calendar); }
+.icon-history { --button-icon: var(--icon-history); }
+.icon-user { --button-icon: var(--icon-user); }
+.icon-home { --button-icon: var(--icon-home); }
+.icon-centers { --button-icon: var(--icon-centers); }
+.icon-help { --button-icon: var(--icon-help); }
+@keyframes button-icon-motion {
+  0% { transform: translateX(0) rotate(0deg) scale(1); }
+  45% { transform: translateX(3px) rotate(-7deg) scale(1.12); }
+  100% { transform: translateX(0) rotate(0deg) scale(1); }
 }
 button:focus-visible,
 input:focus-visible,
@@ -82,6 +134,21 @@ select:focus-visible {
   font-weight: 600;
   padding: 26px 1px 22px;
   border-bottom: 2px solid transparent;
+}
+.desktop-nav .button-icon::after {
+  display: none;
+}
+.desktop-nav .button-icon::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 7px;
+  vertical-align: -2px;
+  background: currentColor;
+  -webkit-mask: var(--button-icon) center / contain no-repeat;
+  mask: var(--button-icon) center / contain no-repeat;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .topbar nav .nav-active {
   color: var(--teal);
@@ -258,6 +325,21 @@ select:focus-visible {
   font-size: 25px;
   float: left;
   margin-right: 12px;
+}
+.quick-links .button-icon::after {
+  display: none;
+}
+.quick-links .button-icon::before {
+  content: "";
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  float: left;
+  margin-right: 12px;
+  background: var(--teal);
+  -webkit-mask: var(--button-icon) center / contain no-repeat;
+  mask: var(--button-icon) center / contain no-repeat;
+  transition: transform 0.25s ease;
 }
 .quick-links b,
 .quick-links small {
@@ -1364,16 +1446,6 @@ input,
 select {
   font-size: 16px;
 }
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-  }
-}
 @media (prefers-contrast: more) {
   :root { --teal: #005f59; --teal-dark: #003f3b; --ink: #102b2d; --line: #8ba5a2; }
   button, input, select { border-width: 2px !important; }
@@ -1645,6 +1717,12 @@ select:focus-visible {
 .topbar nav button:hover {
   color: var(--teal);
 }
+.topbar nav .button-icon:hover::before {
+  animation: nav-icon-pop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.topbar nav .nav-active::before {
+  transform: scale(1.08);
+}
 .topbar nav button {
   transition:
     color 0.2s ease,
@@ -1654,8 +1732,26 @@ select:focus-visible {
   background: #f1faf7;
   transform: translateY(-4px);
 }
+
+@keyframes nav-icon-pop {
+  0% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-3px) scale(1.16) rotate(-6deg); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Respuesta consistente y más suave en los controles que no tienen animación propia. */
+button:not(.brand-button):not(.menu-toggle):not(.menu-backdrop):not(.leaflet-control-zoom-in):not(.leaflet-control-zoom-out) {
+  transition-duration: 0.28s;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+button:not(.brand-button):not(.menu-toggle):not(.menu-backdrop):not(.more):not(.leaflet-control-zoom-in):not(.leaflet-control-zoom-out):hover {
+  filter: saturate(1.06);
+}
 .quick-links button:hover span {
   transform: scale(1.12) rotate(-4deg);
+}
+.quick-links .button-icon:hover::before {
+  animation: button-icon-motion 0.48s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .quick-links span {
   transition: transform 0.25s ease;
@@ -1762,16 +1858,6 @@ footer button {
   .quick-links button:active,
   .big-steps article:active {
     transform: scale(0.985);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
   }
 }
 
@@ -2719,3 +2805,53 @@ footer button {
 :root[data-theme="dark"] .patient-access-card small { color: #c2d9d5; }
 :root[data-theme="dark"] .patient-form select,
 :root[data-theme="dark"] .patient-access-card input { background: #10201d; color: var(--ink); border-color: #466965; }
+
+/* Tipografía más cómoda para lectura en pantallas de PC y móviles. */
+body {
+  font-size: 17px;
+}
+button:not(.more):not(.menu-toggle),
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+.topbar nav button,
+.theme-toggle,
+.profile,
+.eyebrow,
+.type,
+.badge,
+.recommendation-card small,
+.booking-recommendation small,
+.appointment-code small,
+.ai-notice,
+.assistant-error,
+.nearby-alternatives button span,
+.nearby-alternatives button small {
+  font-size: 13px;
+}
+.hero-copy > p,
+.page-intro > p,
+.lead,
+.muted,
+.center-card p,
+.summary p,
+.appointment-address,
+.appointment-info p,
+.chat-message p,
+.voice-status,
+.voice-error,
+.form-error {
+  font-size: 16px;
+}
+.chat-input input {
+  font-size: 16px;
+}
+@media (max-width: 500px) {
+  body { font-size: 17px; }
+  button:not(.more):not(.menu-toggle),
+  input,
+  select,
+  textarea { font-size: 16px; }
+}

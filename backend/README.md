@@ -1,6 +1,6 @@
 # SaludCerca API
 
-API REST de SaludCerca para gestionar centros municipales de salud de La Paz, cuentas ciudadanas, fichas médicas, disponibilidad operativa y orientación inicial asistida por IA.
+API REST de SaludCerca para centros municipales de La Paz, fichas rápidas por C.I., disponibilidad operativa y orientación inicial asistida por IA.
 
 <p align="center">
   <img src="https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white" alt="NestJS" />
@@ -10,100 +10,66 @@ API REST de SaludCerca para gestionar centros municipales de salud de La Paz, cu
   <img src="https://img.shields.io/badge/Gemini_API-4285F4?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Gemini Developer API" />
 </p>
 
-> El asistente de SaludCerca ofrece orientación general; no diagnostica ni prescribe tratamientos. Las señales de alerta se revisan antes de solicitar una respuesta al modelo de IA.
+> El asistente orienta, no diagnostica ni prescribe. Las señales de alerta se evalúan antes de llamar al modelo generativo.
 
 ## Capacidades
 
-- Registro e inicio de sesión con JWT y contraseñas protegidas con `bcryptjs`.
-- Catálogo de centros municipales, servicios, horarios, cupos, espera y stock simulado.
-- Reserva, consulta y cancelación de fichas médicas para ciudadanos autenticados.
-- Control de permisos para operadores asignados a un centro de salud.
+- Catálogo de centros, servicios, turnos, cupos, espera y stock simulado.
+- Reserva de ficha sin cuenta con nombre, C.I. y seguro médico.
+- C.I. protegida mediante SHA-256; no se persiste en texto plano.
+- Consulta y cancelación de fichas por C.I.; una ficha activa por paciente.
+- JWT, bcryptjs y roles para operaciones de personal.
 - Auditoría de cambios de disponibilidad.
-- Asistente Gemini: chat de texto, transcripción de audio y síntesis de voz opcional.
-- Validación global de entradas con `class-validator`.
-
-## Arquitectura
-
-```mermaid
-flowchart LR
-  Client[Frontend React] -->|REST /api| API[NestJS]
-  API --> Auth[JWT + bcryptjs]
-  API --> Prisma[Prisma ORM]
-  Prisma --> DB[(PostgreSQL)]
-  API --> Safety[Reglas de alerta]
-  Safety --> Gemini[Gemini Developer API]
-```
-
-## Tecnologías
-
-<p align="center">
-  <a href="https://nestjs.com/" title="NestJS"><img src="https://skillicons.dev/icons?i=nestjs" height="52" alt="NestJS" /></a>
-  <a href="https://www.typescriptlang.org/" title="TypeScript"><img src="https://skillicons.dev/icons?i=ts" height="52" alt="TypeScript" /></a>
-  <a href="https://nodejs.org/" title="Node.js"><img src="https://skillicons.dev/icons?i=nodejs" height="52" alt="Node.js" /></a>
-  <a href="https://www.postgresql.org/" title="PostgreSQL"><img src="https://skillicons.dev/icons?i=postgres" height="52" alt="PostgreSQL" /></a>
-  <a href="https://www.prisma.io/" title="Prisma"><img src="https://skillicons.dev/icons?i=prisma" height="52" alt="Prisma" /></a>
-  <a href="https://git-scm.com/" title="Git"><img src="https://skillicons.dev/icons?i=git" height="52" alt="Git" /></a>
-</p>
-
-## Requisitos
-
-- Node.js 20 o superior.
-- PostgreSQL local o remoto.
-- Una clave de Gemini Developer API para activar el asistente.
+- Chat Gemini, transcripción de audio y respuesta de voz opcional.
+- DTOs validados globalmente con `class-validator`.
 
 ## Inicio rápido
 
-Desde la carpeta `backend`:
-
 ```powershell
+cd backend
 npm.cmd install
 Copy-Item .env.example .env
 ```
 
-Configura el archivo `.env` con la conexión a PostgreSQL, un secreto JWT y tu clave de Gemini. **Nunca subas `.env` a GitHub.**
+Completa `DATABASE_URL`, `JWT_SECRET` y `GEMINI_API_KEY` en `.env`:
 
 ```powershell
 npm.cmd run db:generate
 npm.cmd run db:migrate -- --name init
 npm.cmd run db:seed
-npm.cmd run start:dev
-```
-
-La API estará disponible en `http://localhost:3000/api`.
-
-Para desarrollo con recarga automática utiliza:
-
-```powershell
 npm.cmd run start:watch
 ```
 
-## Variables de entorno
+La API está disponible en `http://localhost:3000/api` y la prueba de estado en `GET /api/health`.
 
-Consulta [`.env.example`](.env.example) para la plantilla completa.
+## Variables de entorno
 
 ```env
 DATABASE_URL="postgresql://USUARIO:CONTRASENA@localhost:5432/saludcerca?schema=public"
 PORT=3000
-JWT_SECRET="cambia-esto-por-un-secreto-seguro"
+JWT_SECRET="usa-un-secreto-seguro"
 AI_PROVIDER="gemini"
-GEMINI_API_KEY="tu-clave-de-gemini"
+GEMINI_API_KEY="tu-clave"
 GEMINI_CHAT_MODEL="gemini-3.1-flash-lite"
 GEMINI_AUDIO_MODEL="gemini-3.5-flash"
 GEMINI_TTS_MODEL="gemini-2.5-flash-preview-tts"
 ```
 
-## Scripts disponibles
+No subas `.env` ni claves reales a GitHub.
+
+## Scripts
 
 | Comando | Uso |
 |---|---|
-| `npm.cmd run build` | Compila NestJS en `dist/`. |
+| `npm.cmd run start:watch` | API NestJS con recarga automática. |
 | `npm.cmd run start:dev` | Compila e inicia la API. |
-| `npm.cmd run start:watch` | Inicia NestJS con recarga automática. |
+| `npm.cmd run build` | Compila NestJS en `dist/`. |
 | `npm.cmd run db:generate` | Genera Prisma Client. |
-| `npm.cmd run db:migrate` | Crea y aplica una migración de desarrollo. |
-| `npm.cmd run db:deploy` | Aplica migraciones existentes en despliegues. |
-| `npm.cmd run db:seed` | Carga catálogo, centros y datos de demostración. |
+| `npm.cmd run db:migrate -- --name nombre` | Crea y aplica una migración local. |
+| `npm.cmd run db:deploy` | Aplica migraciones existentes, útil en Render. |
+| `npm.cmd run db:seed` | Carga catálogo y datos demostrativos de forma idempotente. |
 | `npm.cmd run db:studio` | Abre Prisma Studio. |
+| `npm.cmd run catalog:geocode` | Herramienta de revisión de coordenadas del catálogo. |
 
 ## Endpoints
 
@@ -111,40 +77,30 @@ El prefijo global es `/api`.
 
 | Método | Ruta | Descripción | Acceso |
 |---|---|---|---|
-| `GET` | `/health` | Comprueba el estado de la API. | Público |
-| `POST` | `/auth/register` | Registra un ciudadano. | Público |
-| `POST` | `/auth/login` | Inicia sesión y devuelve un JWT. | Público |
+| `GET` | `/health` | Estado de la API. | Público |
 | `GET` | `/centers` | Lista y filtra centros. | Público |
-| `GET` | `/centers/:id` | Obtiene el detalle de un centro. | Público |
-| `GET` | `/centers/:id/availability` | Consulta cupos, espera y stock. | Público |
-| `GET` | `/centers/:id/slots` | Consulta turnos disponibles. | Público |
-| `PATCH` | `/centers/:id/availability` | Actualiza información operativa. | Operador asignado |
-| `POST` | `/appointments` | Reserva una ficha. | Ciudadano autenticado |
-| `GET` | `/appointments/me` | Lista las fichas del ciudadano. | Ciudadano autenticado |
-| `DELETE` | `/appointments/:id` | Cancela una ficha propia. | Ciudadano autenticado |
-| `POST` | `/assistant/chat` | Solicita orientación por texto. | Público |
-| `POST` | `/assistant/transcribe` | Transcribe un audio enviado. | Público |
-| `POST` | `/assistant/speak` | Genera audio de una orientación. | Público |
+| `GET` | `/centers/:id` | Detalle de un centro. | Público |
+| `GET` | `/centers/:id/availability` | Cupos, espera y stock. | Público |
+| `GET` | `/centers/:id/slots` | Horarios disponibles. | Público |
+| `PATCH` | `/centers/:id/availability` | Cambia apertura, cupos o espera. | Operador con JWT |
+| `POST` | `/appointments` | Crea una ficha para paciente. | Público |
+| `POST` | `/appointments/history` | Consulta fichas con C.I. | Público |
+| `POST` | `/appointments/:id/cancel` | Cancela ficha con C.I. | Público |
+| `POST` | `/assistant/chat` | Orientación por texto. | Público |
+| `POST` | `/assistant/transcribe` | Transcripción de audio. | Público |
+| `POST` | `/assistant/speak` | Audio opcional para una respuesta. | Público |
+| `POST` | `/auth/login` | Acceso de personal. | Público |
 
-Ejemplo de consulta de centros:
-
-```text
-GET /api/centers?service=Farmacia&openNow=true
-```
+`GET /appointments/me` y `DELETE /appointments/:id` se mantienen para el flujo JWT heredado.
 
 ## Modelo de datos
 
-Prisma administra las tablas de `Usuario`, `CentroSalud`, `ServicioSalud`, `TurnoFicha`, `Ficha`, `StockMedicamento`, `AuditoriaDisponibilidad` y `CatalogoCentroMunicipal`.
+Prisma administra `Paciente`, `Ficha`, `CentroSalud`, `ServicioSalud`, `TurnoFicha`, `StockMedicamento`, `AuditoriaDisponibilidad`, `CatalogoCentroMunicipal` y `Usuario`.
 
-El esquema se encuentra en [`prisma/schema.prisma`](prisma/schema.prisma) y los datos de demostración se cargan con [`prisma/seed.ts`](prisma/seed.ts).
+Las migraciones están en [`prisma/migrations`](prisma/migrations) y la definición completa en [`prisma/schema.prisma`](prisma/schema.prisma).
 
-## Seguridad y despliegue
+## Despliegue
 
-- CORS está abierto para el desarrollo local; en producción debe restringirse al dominio del frontend.
-- La API escucha en `0.0.0.0` y utiliza `PORT`, por lo que es compatible con servicios como Render o Koyeb.
-- Guarda `DATABASE_URL`, `JWT_SECRET` y `GEMINI_API_KEY` como variables secretas en la plataforma de despliegue.
-- Antes de usar datos reales, valida requisitos de privacidad, seguridad y autorización institucional.
+Render usa el [archivo de configuración principal](../render.yaml) para construir el frontend y esta API en un solo servicio HTTPS con PostgreSQL. Define `GEMINI_API_KEY` como secreto en Render. En producción, restringe CORS, configura monitoreo y valida requisitos institucionales de privacidad antes de usar datos reales.
 
-## Documentación general
-
-Consulta el [README principal](../README.md) y la [arquitectura del proyecto](../ARQUITECTURA.md) para conocer el frontend, el mapa y el flujo completo de SaludCerca.
+Consulta también el [README principal](../README.md) y [ARQUITECTURA.md](../ARQUITECTURA.md).
