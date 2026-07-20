@@ -1364,7 +1364,7 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
     setSpeaking(false);
   };
 
-  const speakReply = async (text: string) => {
+  const speakWithGemini = async (text: string) => {
     try {
       stopSpeech();
       setSpeaking(true);
@@ -1400,6 +1400,80 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
       }
       setSpeaking(false);
       setVoiceError("No se pudo generar la respuesta por voz. Puedes leerla en pantalla.");
+    }
+  };
+
+  const speakWithBrowser = (text: string) =>
+    new Promise<void>((resolve, reject) => {
+      if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+        reject(new Error("Voz nativa no disponible"));
+        return;
+      }
+
+      const synthesizer = window.speechSynthesis;
+      const utterance = new SpeechSynthesisUtterance(text);
+      const spanishVoice = synthesizer
+        .getVoices()
+        .find((voice) => voice.lang.toLowerCase().startsWith("es-bo"))
+        ?? synthesizer.getVoices().find((voice) => voice.lang.toLowerCase().startsWith("es"));
+      utterance.lang = spanishVoice?.lang || "es-ES";
+      utterance.rate = 1;
+      if (spanishVoice) utterance.voice = spanishVoice;
+
+      let started = false;
+      let finished = false;
+      let keepAlive: number | undefined;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        if (keepAlive) window.clearInterval(keepAlive);
+        setSpeaking(false);
+      };
+      const timeout = window.setTimeout(() => {
+        if (!started) {
+          synthesizer.cancel();
+          reject(new Error("La voz nativa no inició"));
+        }
+      }, 1500);
+
+      utterance.onstart = () => {
+        started = true;
+        window.clearTimeout(timeout);
+        setSpeaking(true);
+        resolve();
+      };
+      utterance.onend = () => {
+        window.clearTimeout(timeout);
+        finish();
+      };
+      utterance.onerror = () => {
+        window.clearTimeout(timeout);
+        finish();
+        if (!started) reject(new Error("La voz nativa falló"));
+      };
+
+      synthesizer.cancel();
+      try {
+        // Debe ejecutarse sin demoras: Brave conserva el permiso de audio solo
+        // durante el clic que activa "Escuchar".
+        synthesizer.resume();
+        synthesizer.speak(utterance);
+        keepAlive = window.setInterval(() => {
+          if (!finished && synthesizer.speaking) synthesizer.resume();
+        }, 800);
+      } catch {
+        window.clearTimeout(timeout);
+        reject(new Error("No se pudo iniciar la voz nativa"));
+      }
+    });
+
+  const speakReply = async (text: string) => {
+    setVoiceError("");
+    stopSpeech();
+    try {
+      await speakWithBrowser(text);
+    } catch {
+      await speakWithGemini(text);
     }
   };
 
@@ -1463,6 +1537,7 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
     // Las emergencias no esperan a que responda un proveedor de IA.
     if (localSafety.level === "emergency") {
       setMessages((current) => [...current, { from: "bot", text: localSafety.text, triage: localSafety }]);
+      if (voiceEnabled) void speakReply(localSafety.text);
       setSending(false);
       return;
     }
@@ -1476,9 +1551,10 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
         action: response.action,
       };
       setMessages((current) => [...current, { from: "bot", text: response.reply, triage, generated: response.generated }]);
-      if (voiceEnabled && response.generated) void speakReply(response.reply);
+      if (voiceEnabled) void speakReply(response.reply);
     } catch {
       setMessages((current) => [...current, { from: "bot", text: localSafety.text, triage: localSafety, connectionError: true }]);
+      if (voiceEnabled) void speakReply(localSafety.text);
     } finally {
       setSending(false);
     }
@@ -1516,6 +1592,17 @@ function Assistant({ navigate }: { navigate: (to: Route) => void }) {
                 {m.triage && <strong>{m.triage.title}</strong>}
                 {m.triage?.text ?? m.text}
               </p>
+              {m.from === "bot" && (
+                <button
+                  type="button"
+                  className="listen-message button-icon icon-sound"
+                  onClick={() => void speakReply(m.triage?.text ?? m.text)}
+                  aria-label="Escuchar esta respuesta"
+                  title="Escuchar esta respuesta"
+                >
+                  <span>Escuchar</span>
+                </button>
+              )}
               {m.generated && <small className="ai-notice">Respuesta generada por IA; puede equivocarse.</small>}
               {m.connectionError && <small className="assistant-error">No se pudo conectar con la IA. Revisa que el backend y la URL del túnel estén activos.</small>}
               {m.triage?.action === "call-emergency" && (

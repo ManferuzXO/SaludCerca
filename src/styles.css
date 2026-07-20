@@ -79,6 +79,7 @@ button {
 .icon-centers { --button-icon: var(--icon-centers); }
 .icon-help { --button-icon: var(--icon-help); }
 .icon-mic { --button-icon: var(--icon-mic); }
+.icon-sound { --button-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 10v4h4l5 4V6l-5 4H4Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M16 9.5a4 4 0 0 1 0 5m2.5-7.5a7.5 7.5 0 0 1 0 10' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
 @keyframes button-icon-motion {
   0% { transform: translateX(0) rotate(0deg) scale(1); }
   45% { transform: translateX(3px) rotate(-7deg) scale(1.12); }
@@ -1150,6 +1151,21 @@ select:focus-visible {
 .chat-message .bot {
   white-space: pre-line;
 }
+.listen-message {
+  display: inline-flex;
+  align-items: center;
+  margin: 6px 0 0 3px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--teal-dark);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+}
+.listen-message:hover { background: #dff3ef; transform: translateY(-1px); }
 .chat-input .voice-button {
   background: #e7f5f2;
   color: var(--teal);
