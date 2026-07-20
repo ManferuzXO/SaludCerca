@@ -31,7 +31,7 @@ type Route =
   | "/como-funciona"
   | "/operador"
   | "/ingresar";
-type ThemeMode = "auto" | "light" | "dark";
+type ThemeMode = "light" | "dark";
 const THEME_KEY = "saludcerca_theme";
 const routes: Route[] = [
   "/",
@@ -66,28 +66,18 @@ function useRoute() {
 function useTheme() {
   const [theme, setTheme] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem(THEME_KEY);
-    return saved === "light" || saved === "dark" ? saved : "auto";
+    if (saved === "light" || saved === "dark") return saved;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   });
-  const [systemTheme, setSystemTheme] = useState<"light" | "dark">(() =>
-    window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
-  );
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const syncSystemTheme = () => setSystemTheme(mediaQuery.matches ? "dark" : "light");
-
-    syncSystemTheme();
-    mediaQuery.addEventListener("change", syncSystemTheme);
-    return () => mediaQuery.removeEventListener("change", syncSystemTheme);
-  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
-    root.dataset.theme = theme === "auto" ? systemTheme : theme;
-    root.dataset.themeMode = theme;
+    root.dataset.theme = theme;
     localStorage.setItem(THEME_KEY, theme);
-  }, [theme, systemTheme]);
-  return { theme, systemTheme, setTheme };
+  }, [theme]);
+  return { theme, setTheme };
 }
 
 const Icon = ({ children }: { children: string }) => (
@@ -114,13 +104,11 @@ function Header({
   navigate,
   route,
   theme,
-  systemTheme,
   setTheme,
 }: {
   navigate: (to: Route) => void;
   route: Route;
   theme: ThemeMode;
-  systemTheme: "light" | "dark";
   setTheme: (theme: ThemeMode) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -159,9 +147,9 @@ function Header({
       </nav>
       <button
         className="theme-toggle"
-        onClick={() => setTheme(theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto")}
-        aria-label={`Cambiar tema. Tema actual: ${theme === "auto" ? "automático" : theme === "dark" ? "oscuro" : "claro"}`}
-        title={`Tema actual: ${theme === "auto" ? `automático (${systemTheme === "dark" ? "oscuro" : "claro"})` : theme === "dark" ? "oscuro" : "claro"}`}
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        aria-label={`Cambiar a tema ${theme === "dark" ? "claro" : "oscuro"}`}
+        title={`Cambiar a tema ${theme === "dark" ? "claro" : "oscuro"}`}
       >
         <span className="sr-only">Cambiar tema</span>
       </button>
@@ -513,7 +501,7 @@ function MyAppointmentsPage({ navigate }: { navigate: (to: Route) => void }) {
 
 export default function App() {
   const { route, navigate } = useRoute();
-  const { theme, systemTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [center, setCenter] = useState(centers[0]);
   useEffect(() => {
@@ -545,7 +533,6 @@ export default function App() {
         navigate={navigate}
         route={route}
         theme={theme}
-        systemTheme={systemTheme}
         setTheme={setTheme}
       />
       <CitizenActions navigate={navigate} route={route} />

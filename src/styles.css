@@ -1569,7 +1569,7 @@ select {
 
 /* Se activa automáticamente según el modo del sistema operativo. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --cream: #101817;
     --ink: #e5f1ef;
     --line: #35514e;
@@ -1577,57 +1577,58 @@ select {
     --teal-dark: #8be0d7;
     --shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
   }
-  body { background: var(--cream); color: var(--ink); }
-  .topbar,
-  .quick-links,
-  .quick-links button,
-  .outline,
-  .center-card,
-  .booking-box,
-  .summary,
-  .confirmation,
-  .appointment-card,
-  .empty-appointments,
-  .login-card,
-  .assistant-chat,
-  .chat-input,
-  .mobile-menu,
-  .profile,
-  .filter {
+  :root:not([data-theme="light"]) body { background: var(--cream); color: var(--ink); }
+  :root:not([data-theme="light"]) .topbar,
+  :root:not([data-theme="light"]) .quick-links,
+  :root:not([data-theme="light"]) .quick-links button,
+  :root:not([data-theme="light"]) .outline,
+  :root:not([data-theme="light"]) .center-card,
+  :root:not([data-theme="light"]) .booking-box,
+  :root:not([data-theme="light"]) .summary,
+  :root:not([data-theme="light"]) .confirmation,
+  :root:not([data-theme="light"]) .appointment-card,
+  :root:not([data-theme="light"]) .empty-appointments,
+  :root:not([data-theme="light"]) .login-card,
+  :root:not([data-theme="light"]) .assistant-chat,
+  :root:not([data-theme="light"]) .chat-input,
+  :root:not([data-theme="light"]) .mobile-menu,
+  :root:not([data-theme="light"]) .profile,
+  :root:not([data-theme="light"]) .filter {
     background: #172522;
     color: var(--ink);
     border-color: var(--line);
   }
-  .topbar nav button,
-  .quick-links b,
-  .brand,
-  .page h1,
-  .center-card h2,
-  .booking h3,
-  .summary h2,
-  .appointment-card h2 { color: var(--ink); }
-  .hero { background: #17312c; }
-  .hero-copy > p,
-  .muted,
-  .center-card p,
-  .summary p,
-  .appointment-address,
-  .appointment-info p,
-  .login-card > p { color: #b6ceca; }
-  .hero-shape { border-color: #397d74; color: #6ed7ca; }
-  .pulse { border-color: #397d74; }
-  .emergency { background: #35271e; border-color: #9f6b3b; }
-  .emergency strong { color: #ffd0a9; }
-  .emergency span { color: #f1c9a9; }
-  .outline { background: transparent; color: var(--teal); }
-  .chat-head, footer { background: #0f5d57; }
-  .chat-message .bot,
-  .voice-toggle,
-  .demo-login { background: #203a35; color: var(--ink); }
-  .slot,
-  .login-card form input,
-  .chat-input input { background: #10201d; color: var(--ink); border-color: #466965; }
-  .leaflet-popup-content { color: #173b3d; }
+  :root:not([data-theme="light"]) .topbar nav button,
+  :root:not([data-theme="light"]) .quick-links b,
+  :root:not([data-theme="light"]) .brand,
+  :root:not([data-theme="light"]) .page h1,
+  :root:not([data-theme="light"]) .center-card h2,
+  :root:not([data-theme="light"]) .booking h3,
+  :root:not([data-theme="light"]) .summary h2,
+  :root:not([data-theme="light"]) .appointment-card h2 { color: var(--ink); }
+  :root:not([data-theme="light"]) .hero { background: #17312c; }
+  :root:not([data-theme="light"]) .hero-copy > p,
+  :root:not([data-theme="light"]) .muted,
+  :root:not([data-theme="light"]) .center-card p,
+  :root:not([data-theme="light"]) .summary p,
+  :root:not([data-theme="light"]) .appointment-address,
+  :root:not([data-theme="light"]) .appointment-info p,
+  :root:not([data-theme="light"]) .login-card > p { color: #b6ceca; }
+  :root:not([data-theme="light"]) .hero-shape { border-color: #397d74; color: #6ed7ca; }
+  :root:not([data-theme="light"]) .pulse { border-color: #397d74; }
+  :root:not([data-theme="light"]) .emergency { background: #35271e; border-color: #9f6b3b; }
+  :root:not([data-theme="light"]) .emergency strong { color: #ffd0a9; }
+  :root:not([data-theme="light"]) .emergency span { color: #f1c9a9; }
+  :root:not([data-theme="light"]) .outline { background: transparent; color: var(--teal); }
+  :root:not([data-theme="light"]) .chat-head,
+  :root:not([data-theme="light"]) footer { background: #0f5d57; }
+  :root:not([data-theme="light"]) .chat-message .bot,
+  :root:not([data-theme="light"]) .voice-toggle,
+  :root:not([data-theme="light"]) .demo-login { background: #203a35; color: var(--ink); }
+  :root:not([data-theme="light"]) .slot,
+  :root:not([data-theme="light"]) .login-card form input,
+  :root:not([data-theme="light"]) .chat-input input { background: #10201d; color: var(--ink); border-color: #466965; }
+  :root:not([data-theme="light"]) .leaflet-popup-content { color: #173b3d; }
 }
 
 /* Selección manual: anula la preferencia del sistema cuando la persona lo pide. */
